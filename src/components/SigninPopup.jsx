@@ -1,21 +1,44 @@
-import React, { useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Popup, PopupInner } from "../styles/Popup.styled";
 import { AiOutlineClose } from "react-icons/ai";
 import styled from "styled-components";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/firebase";
 
 export const SigninPopup = (props) => {
+  //check user
+  const [user, loading] = useAuthState(auth);
+
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Sign in with google
+  const googleProvider = new GoogleAuthProvider();
+  const googleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      setError(false);
+      // props.setTrigger(false); // popup dispose
+    } catch (error) {
+      const errorMessage = error.message;
+      setError(true);
+    }
+  };
+
   const handleLogin = (e) => {
+    console.log("1");
     e.preventDefault();
 
+    // Sign in with email
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -33,6 +56,14 @@ export const SigninPopup = (props) => {
         console.log(error.message);
       });
   };
+
+  useEffect(() => {
+    if (user) {
+    } else {
+      console.log("error");
+      props.setTrigger(false); // popup dispose
+    }
+  }, [user]);
 
   return props.trigger ? (
     <Popup>
@@ -68,11 +99,13 @@ export const SigninPopup = (props) => {
             </Link>
 
             <button>Login</button>
-            <button>
+          </form>
+          <div className="googleLogin">
+            <button onClick={googleLogin}>
               <FcGoogle size={20} />
               Sign in With Google
             </button>
-          </form>
+          </div>
         </Wrapper>
 
         {props.children}
@@ -106,24 +139,6 @@ const Wrapper = styled.div`
       }
     }
 
-    button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.9rem;
-      margin-bottom: -10px;
-      gap: 1rem;
-      padding: 1rem 0.5rem;
-      width: 65%;
-      border-radius: 1rem;
-      border: none;
-      color: white;
-      background: black;
-      cursor: pointer;
-      &:hover {
-        filter: brightness(60%);
-      }
-    }
     .forgotPassword {
       width: 60%;
       display: flex;
@@ -137,6 +152,45 @@ const Wrapper = styled.div`
       line-height: 0;
       font-size: 0.8rem;
       color: red;
+    }
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+    width: 65%;
+    border-radius: 1rem;
+    border: none;
+    color: white;
+    background: black;
+    cursor: pointer;
+    &:hover {
+      filter: brightness(60%);
+    }
+  }
+
+  .googleLogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    button {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      gap: 1rem;
+      padding: 1rem 0.5rem;
+      width: 65%;
+      border-radius: 1rem;
+      border: none;
+      color: white;
+      background: black;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(60%);
+      }
     }
   }
 `;

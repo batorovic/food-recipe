@@ -2,15 +2,31 @@ import React, { useState } from "react";
 import { GiKnifeFork } from "react-icons/gi";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Signin } from "./Signinold";
 import { Signup } from "../pages/Signup";
 import { Search } from "./Search";
 import { SignupPopup } from "./SignupPopup";
 import { SigninPopup } from "./SigninPopup";
+import { auth } from "../utils/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { signOut } from "firebase/auth";
 
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
+  const [user, loading] = useAuthState(auth);
+  console.log(user);
+
+  // sign out from app
+  const logOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("signed out");
+      })
+      .catch((error) => {
+        console.log("error");
+      });
+  };
+
   return (
     <Nav>
       <div className="logo">
@@ -19,20 +35,29 @@ export const NavBar = () => {
       </div>
       <Search />
 
-      {/* POPUP */}
-      <SigninPopup
-        trigger={signinPopup}
-        setTrigger={setSigninPopup}
-      ></SigninPopup>
-      <SignupPopup trigger={signupPopup} setTrigger={setSignupPopup}>
-        <Signup />
-      </SignupPopup>
-
-      <SignDiv>
-        <SignLink onClick={() => setSigninPopup(true)}>Sign in</SignLink>
-        <span>/</span>
-        <SignLink onClick={() => setSignupPopup(true)}>Sign up</SignLink>
-      </SignDiv>
+      {!user && (
+        <>
+          <SigninPopup
+            trigger={signinPopup}
+            setTrigger={setSigninPopup}
+          ></SigninPopup>
+          <SignupPopup trigger={signupPopup} setTrigger={setSignupPopup}>
+            <Signup />
+          </SignupPopup>
+          <SignDiv>
+            <SignLink onClick={() => setSigninPopup(true)}>Sign in</SignLink>
+            <span>/</span>
+            <SignLink onClick={() => setSignupPopup(true)}>Sign up</SignLink>
+          </SignDiv>
+        </>
+      )}
+      {user && (
+        <SignDiv>
+          <SignLink to="/addrecipe">Add recipe</SignLink>
+          <SignLink to="/profile">Profil</SignLink>
+          <button onClick={logOut}>Signout</button>
+        </SignDiv>
+      )}
     </Nav>
   );
 };
