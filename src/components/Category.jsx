@@ -4,6 +4,7 @@ import { GiNoodles, GiCroissant } from "react-icons/gi";
 import { List } from "../styles/Category.styled";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { motin } from "framer-motion";
 
 export const Category = () => {
   return (

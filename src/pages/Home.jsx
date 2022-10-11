@@ -3,6 +3,7 @@ import { Veggie } from "../components/Veggie";
 import { motion } from "framer-motion";
 
 import React from "react";
+import { Category } from "../components/Category";
 
 export const Home = () => {
   return (

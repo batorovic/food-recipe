@@ -30,14 +30,16 @@ const FormStyle = styled.form`
   margin: 0rem 10rem;
   div {
     position: relative;
-    width: 100%;
+    width: 120%;
   }
   input {
     border: none;
     background: linear-gradient(35deg, #494949, #313131);
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: white;
-    padding: 0.5rem 3rem;
+    /* padding: 0.5rem 3rem; */
+    padding: 0.5rem 3.8rem;
+
     border-radius: 1rem;
     outline: none;
     width: 100%;
@@ -48,6 +50,8 @@ const FormStyle = styled.form`
     color: white;
     top: 50%;
     left: 0%;
+    width: 20px;
+    height: 20px;
     transform: translate(100%, -50%);
   }
 `;

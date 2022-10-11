@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  margin: 4rem 0rem;
+  margin-bottom: 4rem;
 `;
 
 export const Card = styled.div`

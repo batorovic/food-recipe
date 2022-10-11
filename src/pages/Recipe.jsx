@@ -18,7 +18,6 @@ export const Recipe = () => {
     // checki kaldır simdilik dursun hep req atmasin diye duruyor
     const check = localStorage.getItem("recipe");
     if (check) {
-      console.log(check);
       setDetails(JSON.parse(check));
     } else {
       const data = await fetch(
