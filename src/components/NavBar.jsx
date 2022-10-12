@@ -9,12 +9,13 @@ import { SigninPopup } from "./SigninPopup";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
+import { CgProfile } from "react-icons/cg";
 
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
   const [user, loading] = useAuthState(auth);
-  console.log(user);
+  // console.log(user);
 
   // sign out from app
   const logOut = () => {
@@ -42,8 +43,9 @@ export const NavBar = () => {
             setTrigger={setSigninPopup}
           ></SigninPopup>
           <SignupPopup trigger={signupPopup} setTrigger={setSignupPopup}>
-            <Signup />
+            {/* <Signup /> */}
           </SignupPopup>
+
           <SignDiv>
             <SignLink onClick={() => setSigninPopup(true)}>Sign in</SignLink>
             <span>/</span>
@@ -53,8 +55,20 @@ export const NavBar = () => {
       )}
       {user && (
         <SignDiv>
+          <SignLink to={`/profile/${user.uid}`}>
+            {user.photoURL ? (
+              <img src={user.photoURL} alt="" className="avatar" />
+            ) : (
+              <CgProfile
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              />
+            )}
+          </SignLink>
           <SignLink to="/addrecipe">Add recipe</SignLink>
-          <SignLink to="/profile">Profil</SignLink>
           <button onClick={logOut}>Signout</button>
         </SignDiv>
       )}
@@ -91,6 +105,15 @@ const SignLink = styled(Link)`
   margin: 0rem 0.5rem;
   &:hover {
     color: #dc930b;
+  }
+  .avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    object-fit: cover;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
   }
 `;
 

@@ -11,9 +11,9 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Signin } from "../components/Signinold";
 import { NavBar } from "../components/NavBar";
 import { Category } from "../components/Category";
+import { Profile } from "../pages/Profile";
 
 export const Layout = () => {
   return (
@@ -55,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: "/recipe/:id",
         element: <Recipe />,
+      },
+      {
+        path: "/profile/:name",
+        element: <Profile />,
       },
     ],
   },
