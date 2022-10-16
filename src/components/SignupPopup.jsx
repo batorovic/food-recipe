@@ -47,6 +47,8 @@ export const SignupPopup = (props) => {
           posts: [],
           photoUrl: user.photoURL,
           username: username,
+          bannerPhotoUrl:
+            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/banner%2FFdo6bnFXkAEGtHV.jpg?alt=media&token=ef47dc00-c245-4fbb-863d-4e116f238db9",
         });
       })
       .catch((error) => {

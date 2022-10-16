@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GiKnifeFork } from "react-icons/gi";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -6,15 +6,18 @@ import { Signup } from "../pages/Signup";
 import { Search } from "./Search";
 import { SignupPopup } from "./SignupPopup";
 import { SigninPopup } from "./SigninPopup";
-import { auth } from "../utils/firebase";
+import { auth, db } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import { CgProfile } from "react-icons/cg";
+import { doc, getDoc } from "firebase/firestore";
 
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
   const [user, loading] = useAuthState(auth);
+  const [snap, setSnap] = useState({});
+
   // console.log(user);
 
   // sign out from app
@@ -27,6 +30,25 @@ export const NavBar = () => {
         console.log("error");
       });
   };
+
+  useEffect(() => {
+    const getSnap = async () => {
+      if (user) {
+        const docRef = doc(db, "User", `${user.uid}`);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setSnap(docSnap.data());
+          console.log(docSnap.data());
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+        }
+      }
+    };
+
+    getSnap();
+  }, [user, snap]);
 
   return (
     <Nav>
@@ -56,8 +78,8 @@ export const NavBar = () => {
       {user && (
         <SignDiv>
           <SignLink to={`/profile/${user.uid}`}>
-            {user.photoURL ? (
-              <img src={user.photoURL} alt="" className="avatar" />
+            {snap.photoUrl ? (
+              <img src={snap.photoUrl} alt="" className="avatar" />
             ) : (
               <CgProfile
                 style={{
@@ -69,7 +91,9 @@ export const NavBar = () => {
             )}
           </SignLink>
           <SignLink to="/addrecipe">Add recipe</SignLink>
-          <button onClick={logOut}>Signout</button>
+          <Link className="btn-logut" onClick={logOut}>
+            Sign out
+          </Link>
         </SignDiv>
       )}
     </Nav>
@@ -100,7 +124,7 @@ const Nav = styled.div`
 
 const SignLink = styled(Link)`
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   margin: 0rem 0.5rem;
   &:hover {
@@ -112,8 +136,8 @@ const SignLink = styled(Link)`
     align-items: center;
     object-fit: cover;
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
   }
 `;
 
@@ -121,4 +145,13 @@ const SignDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  .btn-logut {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0rem 0.5rem;
+    &:hover {
+      color: #dc930b;
+    }
+  }
 `;

@@ -62,7 +62,7 @@ export const SigninPopup = (props) => {
   };
 
   const saveUser = async (user) => {
-    // check user by doc id it its not exits create a doc.
+    // check user by doc id if its not exits create a doc.
     const docRef = doc(db, "User", `${user.uid}`);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
@@ -77,6 +77,8 @@ export const SigninPopup = (props) => {
         posts: [],
         photoUrl: user.photoURL,
         username: user.uid,
+        bannerPhotoUrl:
+          "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/banner%2FFdo6bnFXkAEGtHV.jpg?alt=media&token=ef47dc00-c245-4fbb-863d-4e116f238db9",
       });
     }
   };
