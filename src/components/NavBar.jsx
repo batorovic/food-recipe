@@ -32,23 +32,23 @@ export const NavBar = () => {
   };
 
   useEffect(() => {
-    const getSnap = async () => {
-      if (user) {
-        const docRef = doc(db, "User", `${user.uid}`);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          setSnap(docSnap.data());
-          console.log(docSnap.data());
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      }
-    };
-
     getSnap();
-  }, [user, snap]);
+  }, [user]);
+
+  const getSnap = async () => {
+    if (user) {
+      console.log("navbar use effect");
+      const docRef = doc(db, "User", `${user.uid}`);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setSnap(docSnap.data());
+      } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    }
+  };
 
   return (
     <Nav>
@@ -109,8 +109,8 @@ const Logo = styled(Link)`
 const Nav = styled.div`
   padding: 3rem 0rem;
   display: flex;
-  /* justify-content: flex-start; */
   justify-content: space-between;
+  /* justify-content: center; */
   align-items: center;
   svg {
     font-size: 2rem;

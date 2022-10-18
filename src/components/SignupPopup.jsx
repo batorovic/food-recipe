@@ -37,10 +37,10 @@ export const SignupPopup = (props) => {
         // console.log(user?.uid);
 
         await setDoc(doc(db, "User", `${user.uid}`), {
-          about: "",
+          about: `Hello! welcome to my page`,
           email: email,
           favorites: [],
-          followers: "",
+          followers: 0,
           joinDate: user.metadata.creationTime,
           name: "",
           numberOfPosts: 0,
@@ -60,6 +60,8 @@ export const SignupPopup = (props) => {
 
   useEffect(() => {
     if (user) {
+      console.log("sign up popup usereffect");
+
       props.setTrigger(false); // popup dispose
     } else {
       console.log("error");

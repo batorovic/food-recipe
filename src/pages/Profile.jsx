@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AiFillCamera } from "react-icons/ai";
+import { TiEdit } from "react-icons/ti";
+
 import { auth, db, storage } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import {
   uploadBytes,
   ref,
@@ -19,17 +22,37 @@ export const Profile = () => {
   const [snap, setSnap] = useState({});
   const [toggleState, setToggleState] = useState(1); //1 Tariflerim 2 Tarif Defterim
   const [imagePath, setImagePath] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [favoritesCount, setFavoritesCount] = useState(0);
+  const [recipeCount, setRecipeCount] = useState(0);
+  const [followerCount, setFollowerCount] = useState(0);
+  const navigate = useNavigate();
+
   const toggleTab = (index) => {
     setToggleState(index);
   };
   let params = useParams();
 
+  const getData = async () => {
+    if (user) {
+      console.log("profile get snap use effect");
+      const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
+
+      setFavoritesCount(snapshot.favorites.length);
+      setRecipeCount(snapshot.posts.length);
+      setFavoritesCount(snapshot.followers);
+
+      setSnap(snapshot);
+    }
+  };
   useEffect(() => {
     getData();
-  }, [user, snap]);
+  }, [user]);
 
   useEffect(() => {
     const uploadFile = () => {
+      console.log("merhaba ben upload file  usereffect");
+
       //  farklı isim kullanmıyorum çünkü birden fazla banner photo yükleyince farklı dosyalar oluyor ve yer kaplıyor.
       //  bu şekilde tek bir dosya üzerinden override ediyorum.
       // const name = new Date().getTime() + file.name;
@@ -83,6 +106,8 @@ export const Profile = () => {
                 photoUrl: downloadURL,
               });
             }
+            console.log("basarili upload get snaphot");
+            getData();
           });
         }
       );
@@ -91,13 +116,10 @@ export const Profile = () => {
     file && uploadFile();
   }, [file]);
 
-  const getData = async () => {
-    if (user) {
-      const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-      // console.log(snapshot);
-      setSnap(snapshot);
-    }
+  const navigateToSettings = () => {
+    navigate(`/settings`);
   };
+
   return (
     <Wrapper>
       <div className="img-banner">
@@ -126,7 +148,12 @@ export const Profile = () => {
         </div>
         <span id="username">{params.name}</span>
       </div>
+
       <BottomLeftSide>
+        <div className="about">
+          <span>{snap.about}</span>
+          <TiEdit className="editIcon" size={25} onClick={navigateToSettings} />
+        </div>
         <div className="bloc-tabs">
           <button
             className={toggleState === 1 ? "tabs active-tabs" : "tabs"}
@@ -141,7 +168,6 @@ export const Profile = () => {
             Tarif Defterim
           </button>
         </div>
-
         <div className="content-tabs">
           <div
             className={toggleState === 1 ? "content active-content" : "content"}
@@ -160,65 +186,137 @@ export const Profile = () => {
           </div>
         </div>
       </BottomLeftSide>
-      <BottomrightSide>
-        <img src={snap.photoUrl} alt="" />
-        <div className="profilePicture">
-          <label htmlFor="fileProfilePicture">
-            <AiFillCamera size={35} /> Update Your Profile Picture
-          </label>
-          <input
-            type="file"
-            id="fileProfilePicture"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              setImagePath("profile/profilePicture.jpg");
-              setFile(e.target.files[0]);
-            }}
-          />
-        </div>
-      </BottomrightSide>
+      <BottomRightSide>
+        <ProfilePicture>
+          <img src={snap.photoUrl} alt="" />
+          <div className="profilePicture">
+            <label htmlFor="fileProfilePicture">
+              <AiFillCamera size={35} /> Update Your Profile Picture
+            </label>
+            <input
+              type="file"
+              id="fileProfilePicture"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                setImagePath("profile/profilePicture.jpg");
+                setFile(e.target.files[0]);
+              }}
+            />
+          </div>
+        </ProfilePicture>
+        <ProfileStats>
+          <div className="followerCount">
+            <span className="spanCount">{favoritesCount}</span>
+            <span>Followers</span>
+          </div>
+          <div className="recipeCount">
+            <span className="spanCount">0</span>
+            <span>Recipes</span>
+          </div>
+          <div className="favoritesCount">
+            <span className="spanCount">0</span>
+            <span>Favorites</span>
+          </div>
+        </ProfileStats>
+      </BottomRightSide>
     </Wrapper>
   );
 };
 
-const BottomrightSide = styled.div`
+const BottomRightSide = styled.div`
   position: relative;
+  width: 350px;
+  height: 800px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 12rem;
+  margin-left: 40em;
+`;
+
+const ProfilePicture = styled.div`
+  position: absolute;
   width: 200px;
   height: 200px;
-  margin-top: 12rem;
-  margin-left: 42em;
+
   .profilePicture {
     display: none;
     transform: translate(7%, 120%);
+
     label {
       color: white;
     }
   }
   img {
-    width: 200px;
-    height: 200px;
-    position: absolute;
-    object-fit: fill;
-    border-radius: 100%;
-    background-color: green;
-    border: 5px solid white;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 5px solid white;
+    border-radius: 100%;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    position: absolute;
   }
   &:hover .profilePicture {
     display: block;
   }
 `;
 
-const BottomLeftSide = styled.div`
-  width: 580px;
-  /* height: auto; */
-  left: 0;
-  margin-left: 7.15rem;
-  margin-top: 20rem;
+const ProfileStats = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
+  margin-top: 15rem;
+  width: 330px;
+  height: 100px;
+  gap: 2rem;
+  .followerCount,
+  .recipeCount,
+  .favoritesCount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .spanCount {
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient(to right, #f27121, #e94057) 0 0 100% 0;
+  }
+`;
 
-  /* gap: 40rem; */
+const BottomLeftSide = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 800px;
+  margin-top: 20rem;
+  margin-right: 8rem;
+  position: absolute;
   word-break: break-all;
+
+  .about {
+    height: 10px;
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15rem;
+    margin-bottom: 2rem;
+    margin-left: -2rem;
+
+    &:hover .editIcon {
+      display: block;
+    }
+    .editIcon {
+      display: none;
+      cursor: pointer;
+    }
+  }
 
   .active-content {
     display: block;
@@ -238,7 +336,6 @@ const BottomLeftSide = styled.div`
     font-size: 1.2rem;
     color: black;
     font-weight: 600;
-
     padding: 15px;
     text-align: center;
     /* width: 50%; */
@@ -246,17 +343,8 @@ const BottomLeftSide = styled.div`
     cursor: pointer;
     /* border-bottom: 1px solid rgba(0, 0, 0, 0.274); */
     border: none; //a
-    box-sizing: content-box;
     position: relative;
     outline: none;
-  }
-  .tabs:not(:last-child) {
-    /* border-right: 1px solid rgba(0, 0, 0, 0.274); */
-  }
-
-  .active-tabs {
-    /* background: white; */
-    /* border-bottom: 1px solid transparent; */
   }
 
   .active-tabs::before {

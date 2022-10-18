@@ -67,10 +67,10 @@ export const SigninPopup = (props) => {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
       await setDoc(doc(db, "User", `${user.uid}`), {
-        about: "",
+        about: `Hello! welcome to my page`,
         email: user.email,
         favorites: [],
-        followers: "",
+        followers: 0,
         joinDate: user.metadata.creationTime,
         name: user.displayName,
         numberOfPosts: 0,
@@ -84,6 +84,7 @@ export const SigninPopup = (props) => {
   };
   useEffect(() => {
     if (user) {
+      console.log("siginpopup usereffect");
     } else {
       console.log("error");
       props.setTrigger(false); // popup dispose

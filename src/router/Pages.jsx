@@ -14,6 +14,7 @@ import { AnimatePresence } from "framer-motion";
 import { NavBar } from "../components/NavBar";
 import { Category } from "../components/Category";
 import { Profile } from "../pages/Profile";
+import { Settings } from "../pages/Settings";
 
 export const Layout = () => {
   return (
@@ -53,7 +54,7 @@ export const router = createBrowserRouter([
         element: <Searched />,
       },
       {
-        path: "/recipe/:id",
+        path: "/recipe/:name",
         element: <Recipe />,
       },
       {
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
     ],
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
   },
 ]);
 
