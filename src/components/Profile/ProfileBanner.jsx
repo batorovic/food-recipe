@@ -12,6 +12,7 @@ export const ProfileBanner = (props) => {
   const navigateToSettings = () => {
     navigate(`/settings`);
   };
+
   return (
     <ProfileBannerWrapper>
       <img src={props.snapshot.bannerPhotoUrl} alt="" />
@@ -33,15 +34,6 @@ export const ProfileBanner = (props) => {
           getData={props.getData}
           user={props.user}
         />
-        {/* <input
-          type="file"
-          id="fileBanner"
-          style={{ display: "none" }}
-          onChange={(e) => {
-            props.setImagePath("profile/bannerPhoto.jpg");
-            props.setFile(e.target.files[0]);
-          }}
-        /> */}
       </div>
       <div className="userNameSection">
         <span id="username">{params.name}</span>
@@ -86,6 +78,10 @@ const ProfileBannerWrapper = styled.div`
     }
   }
   &:hover .btnFollow {
+    display: block;
+  }
+
+  .btnFollow {
     font-size: 1rem;
     color: white;
     width: 150px;
@@ -93,6 +89,7 @@ const ProfileBannerWrapper = styled.div`
     border-radius: 20px;
     background: linear-gradient(to right, #f27121, #e94057);
     border: none;
+    display: none;
     cursor: pointer;
     &:hover {
       filter: brightness(0.9);
@@ -126,5 +123,15 @@ const ProfileBannerWrapper = styled.div`
     height: 100%;
     width: 100%;
     object-fit: fill;
+  }
+  label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
   }
 `;

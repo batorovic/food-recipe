@@ -9,9 +9,9 @@ export const ProfileRightColumn = (props) => {
       <ProfilePicture
         snap={props.snap}
         getData={props.getData}
-        user={props.suser}
+        user={props.user}
       />
-      <ProfileStats />
+      <ProfileStats snap={props.snap} user={props.user} />
     </ProfileRightColumnWrapper>
   );
 };

@@ -11,21 +11,14 @@ export const ProfilePicture = (props) => {
         <label htmlFor="fileProfilePicture">
           <AiFillCamera size={35} /> Update Your Profile Picture
         </label>
-        <FileUpload
-          path={"profile/profilePicture.jpg"}
-          id="fileProfilePicture"
-          getData={props.getData}
-          user={props.user}
-        />
-        {/* <input
-          type="file"
-          id="fileProfilePicture"
-          style={{ display: "none" }}
-          onChange={(e) => {
-            props.setImagePath("profile/profilePicture.jpg");
-            props.setFile(e.target.files[0]);
-          }}
-        /> */}
+        {props.user && (
+          <FileUpload
+            path={"profile/profilePicture.jpg"}
+            id="fileProfilePicture"
+            getData={props.getData}
+            user={props.user}
+          />
+        )}
       </div>
     </ProfilePictureWrapper>
   );
@@ -55,5 +48,15 @@ const ProfilePictureWrapper = styled.div`
   }
   &:hover .profilePicture {
     display: block;
+  }
+  label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
   }
 `;

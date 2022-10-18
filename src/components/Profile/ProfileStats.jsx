@@ -1,27 +1,19 @@
-import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import styled from "styled-components";
-import { auth, db } from "../../utils/firebase";
-export const ProfileStats = () => {
+
+export const ProfileStats = (props) => {
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [recipeCount, setRecipeCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
-  const [user, loading, error] = useAuthState(auth);
 
-  const getData = async () => {
-    if (user) {
-      console.log("profile get snap use effect");
-      const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-
-      setFavoritesCount(snapshot.favorites.length);
-      setRecipeCount(snapshot.posts.length);
-      setFollowerCount(snapshot.followers);
-    }
-  };
   useEffect(() => {
-    getData();
-  }, [user]);
+    if (Object.keys(props.snap).length !== 0) {
+      console.log("profile status count use effect");
+      setFollowerCount(props.snap.followers);
+      setFavoritesCount(props.snap.favorites.length);
+      setRecipeCount(props.snap.posts.length);
+    }
+  }, [props.snap]);
   return (
     <ProfileStatsWrapper>
       <div className="followerCount">
