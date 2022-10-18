@@ -138,6 +138,7 @@ const SignLink = styled(Link)`
     border-radius: 50%;
     width: 40px;
     height: 40px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px;
   }
 `;
 
