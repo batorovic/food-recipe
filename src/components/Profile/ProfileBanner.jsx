@@ -1,52 +1,70 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillCamera } from "react-icons/ai";
 import { TiEdit } from "react-icons/ti";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { FileUpload } from "../Inputs/FileUpload";
+import { SigninPopup } from "../SigninPopup";
 
 export const ProfileBanner = (props) => {
+  const [followButtonText, setFollowButtonText] = useState("Follow");
+
   const navigate = useNavigate();
   let params = useParams();
+  const [signinPopup, setSigninPopup] = useState(false);
+  const [follow, setFollowStatus] = useState(false);
 
   const navigateToSettings = () => {
     navigate(`/settings`);
   };
 
+  // useEffect(() => {
+  //   if (follow) {
+  //     console.log("follow status");
+  //   }
+  // }, [signinPopup]);
+
   return (
     <ProfileBannerWrapper>
+      {/* signin popup */}
+      <SigninPopup trigger={signinPopup} setTrigger={setSigninPopup} />
       <img src={props.snapshot.bannerPhotoUrl} alt="" />
-      {/* <img
-      src={
-        file
-          ? URL.createObjectURL(file)
-          : "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/banner%2FFdo6bnFXkAEGtHV.jpg?alt=media&token=ef47dc00-c245-4fbb-863d-4e116f238db9"
-      }
-      alt=""
-    /> */}
-      <div className="imgSelect">
-        <label htmlFor="fileBanner">
-          <AiFillCamera size={25} /> Update Your Banner Image
-        </label>
-        <FileUpload
-          path={"profile/bannerPhoto.jpg"}
-          id="fileBanner"
-          getData={props.getData}
-          user={props.user}
-        />
-      </div>
+      {props.user && (
+        <div className="imgSelect">
+          <label htmlFor="fileBanner">
+            <AiFillCamera size={25} /> Update Your Banner Image
+          </label>
+          <FileUpload
+            path={"profile/bannerPhoto.jpg"}
+            id="fileBanner"
+            getData={props.getData}
+            user={props.user}
+          />
+        </div>
+      )}
       <div className="userNameSection">
         <span id="username">{params.name}</span>
-        {props.user && params.name === props.user.uid && (
-          <TiEdit
-            className="userNameEdit"
-            size={25}
-            onClick={navigateToSettings}
-          />
-        )}
+        {props.user &&
+          (params.name === props.user.uid ||
+            params.name === props.snapshot.username) && (
+            <TiEdit
+              className="userNameEdit"
+              size={25}
+              onClick={navigateToSettings}
+            />
+          )}
 
+        {/* Daha sonradan buraya user varsa ve takip etmiyorsa kosulu eklenecek */}
         {!props.user && (
-          <button className="btnFollow">{props.followButtonText}</button>
+          <button
+            className="btnFollow"
+            onClick={() => {
+              setFollowStatus(true);
+              setSigninPopup(true);
+            }}
+          >
+            {followButtonText}
+          </button>
         )}
       </div>
     </ProfileBannerWrapper>

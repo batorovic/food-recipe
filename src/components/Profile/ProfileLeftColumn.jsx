@@ -18,7 +18,9 @@ export const ProfileLeftColumn = (props) => {
     <BottomLeftSide>
       <div className="about">
         <span>{props.snap.about}</span>
-        <TiEdit className="editIcon" size={25} onClick={navigateToSettings} />
+        {props.user && (
+          <TiEdit className="editIcon" size={25} onClick={navigateToSettings} />
+        )}
       </div>
       <div className="bloc-tabs">
         <button

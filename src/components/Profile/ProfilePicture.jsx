@@ -7,19 +7,22 @@ export const ProfilePicture = (props) => {
   return (
     <ProfilePictureWrapper>
       <img src={props.snap.photoUrl} alt="" />
-      <div className="profilePicture">
-        <label htmlFor="fileProfilePicture">
-          <AiFillCamera size={35} /> Update Your Profile Picture
-        </label>
-        {props.user && (
-          <FileUpload
-            path={"profile/profilePicture.jpg"}
-            id="fileProfilePicture"
-            getData={props.getData}
-            user={props.user}
-          />
-        )}
-      </div>
+      {props.user && (
+        <>
+          <div className="profilePicture">
+            <label htmlFor="fileProfilePicture">
+              <AiFillCamera size={35} /> Update Your Profile Picture
+            </label>
+
+            <FileUpload
+              path={"profile/profilePicture.jpg"}
+              id="fileProfilePicture"
+              getData={props.getData}
+              user={props.user}
+            />
+          </div>
+        </>
+      )}
     </ProfilePictureWrapper>
   );
 };

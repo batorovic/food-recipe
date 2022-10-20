@@ -77,7 +77,7 @@ export const NavBar = () => {
       )}
       {user && (
         <SignDiv>
-          <SignLink to={`/profile/${user.uid}`}>
+          <SignLink to={`/profile/${snap.username}`}>
             {snap.photoUrl ? (
               <img src={snap.photoUrl} alt="" className="avatar" />
             ) : (

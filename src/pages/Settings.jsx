@@ -1,61 +1,160 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../utils/firebase";
+import { auth, updateField } from "../utils/firebase";
 import styled from "styled-components";
-import { AiOutlineClose, AiTwotoneAccountBook } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { GetCollectionSnapshot } from "../utils/GetCollectionSnapshot";
+import { CustomButton } from "../components/Button/CustomButton";
+import { FormInput } from "../components/Inputs/FormInput";
+import {
+  Checkmark,
+  CheckmarkSucces,
+} from "../components/Button/CheckmarkSucces";
 
 export const Settings = () => {
   const [user, loading] = useAuthState(auth);
-  const navigate = useNavigate();
+  const [snap, setSnap] = useState({});
+  const [name, setName] = useState("");
+  const [mail, setMail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [about, setAbout] = useState("");
+  const [updateStatus, setUpdateStatus] = useState(false);
 
+  const [values, setValues] = useState({
+    name: "",
+    username: "",
+    email: "",
+  });
+
+  const inputs = [
+    {
+      id: 1,
+      name: "name",
+      type: "text",
+      label: "Name",
+    },
+    {
+      id: 2,
+      name: "username",
+      type: "text",
+      label: "Username",
+    },
+    {
+      id: 3,
+      name: "email",
+      type: "email",
+      label: "Email",
+    },
+  ];
+
+  const onChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  const navigate = useNavigate();
   const btnClose = () => {
     navigate(-1);
   };
 
+  useEffect(() => {
+    getSnapshot();
+  }, [user]);
+
+  const getSnapshot = async () => {
+    if (user) {
+      console.log("get collection snapshot user effect");
+      let snapshot = await GetCollectionSnapshot("User", user);
+
+      setValues({
+        name: snapshot.name,
+        email: snapshot.email,
+        username: snapshot.username,
+      });
+      setAbout(snapshot.about);
+
+      setSnap(snapshot);
+      // setName(snapshot.name);
+      // setMail(snapshot.email);
+      // setUserName(snapshot.username);
+    }
+  };
+
+  const btnUpdate = async () => {
+    if (
+      await updateField("User", user.uid, {
+        username: values["username"],
+        email: values["email"],
+        name: values["name"],
+        about: about,
+      })
+    ) {
+      setUpdateStatus(true);
+      setTimeout(() => {
+        setUpdateStatus(false);
+        navigate(-1);
+      }, 1350);
+    }
+  };
+
   return (
     <Wrapper>
-      <div className="top">
-        <button className="btnClose" onClick={btnClose}>
-          <AiOutlineClose />
-          <span>Kapat</span>
-        </button>
-      </div>
+      {user && (
+        <>
+          <div className="top">
+            <button className="btnClose" onClick={btnClose}>
+              <AiOutlineClose />
+              <span>Close</span>
+            </button>
+          </div>
+          <form className="userInformation" onSubmit={handleSubmit}>
+            <h3>User Information</h3>
+            {inputs.map((input) => (
+              <FormInput
+                key={input.id}
+                {...input}
+                value={values[input.name]}
+                onChange={onChange}
+                style={
+                  input.name === "email" ||
+                  (input.name === "username" && user.uid !== snap.username)
+                    ? { pointerEvents: "none", backgroundColor: "#d3d3d3" }
+                    : {}
+                }
+              />
+            ))}
+            <div className="inputAbout">
+              <label htmlFor="inpAbout">About</label>
+              <textarea
+                id="inpAbout"
+                maxLength={200}
+                value={about}
+                onChange={(e) => {
+                  setAbout(e.target.value);
+                }}
+              ></textarea>
+            </div>
 
-      <form className="userInformation">
-        <h3>User Information</h3>
-        <div className="inputFields">
-          <div className="inputName">
-            <label htmlFor="inputName">Name</label>
-            <input type="text" />
-          </div>
-          <div className="inputUsername">
-            <label htmlFor="inputUsername">Username</label>
-            <input type="text" />
-          </div>
-          <div className="inputMail">
-            <label htmlFor="inputUsername">Mail</label>
-            <input type="text" />
-          </div>
-          <div className="btnSubmit">
-            <button>Submit</button>
-          </div>
-        </div>
-      </form>
+            <CustomButton name={"Update"} onClick={btnUpdate} />
+          </form>
+
+          {updateStatus && (
+            <>
+              <CheckmarkSucces />
+            </>
+          )}
+        </>
+      )}
+      {!user && (
+        <>
+          <h4>NO ACCES</h4>
+        </>
+      )}
     </Wrapper>
-    // <>
-    //   {!user && (
-    //     <div>
-    //       <p>no permission</p>
-    //     </div>
-    //   )}
-
-    //   {user && (
-    //     <div>
-    //       <p>settings</p>
-    //     </div>
-    //   )}
-    // </>
   );
 };
 
@@ -65,41 +164,26 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  .top {
-    width: 450px;
-  }
 
-  /* .userInformation {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-around;
-  } */
-  .inputFields {
-    width: 450px;
-  }
-  .inputName,
-  .inputUsername,
-  .inputMail {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .inputUsername,
-  .inputMail {
-    pointer-events: none;
-    input {
-      background-color: #d3d3d3;
-    }
-  }
-
-  input {
+  textarea {
     width: 285px;
     padding: 12px;
     margin: 10px 0px;
     margin-left: 80px;
     border-radius: 5px;
     border: 1px solid grey;
+    resize: vertical;
+    min-height: 55px;
+  }
+
+  .top {
+    width: 450px;
+  }
+
+  .inputAbout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .btnClose {
@@ -116,22 +200,5 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    button {
-      width: 200px;
-    }
   }
-  /*
-  .inputFields {
-    width: 400px;
-    height: 250px;
-    background-color: red;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-direction: column;
-    gap: 1.5rem;
-    input {
-      padding: 5px;
-    }
-  } */
 `;

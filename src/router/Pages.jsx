@@ -15,6 +15,8 @@ import { NavBar } from "../components/NavBar";
 import { Category } from "../components/Category";
 import { Profile } from "../pages/Profile";
 import { Settings } from "../pages/Settings";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/firebase";
 
 export const Layout = () => {
   return (
