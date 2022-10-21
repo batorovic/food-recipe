@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth, db, getCollectionByField } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { useParams, useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { useParams } from "react-router-dom";
 import { ProfileBanner } from "../components/Profile/ProfileBanner";
 import { ProfileLeftColumn } from "../components/Profile/ProfileLeftColumn";
 import { ProfileRightColumn } from "../components/Profile/ProfileRightColumn";
-import { collection, query, where } from "firebase/firestore";
 
 export const Profile = () => {
   const [user, loading, error] = useAuthState(auth);
   const [snap, setSnap] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   // const [followButtonText, setFollowButtonText] = useState("Follow");
 
   let params = useParams();
@@ -21,6 +21,7 @@ export const Profile = () => {
       console.log("profile get snap use effect1");
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
       setSnap(snapshot);
+      setIsLoading(false);
     } else {
       let snapshot = await getCollectionByField(
         "User",
@@ -28,6 +29,8 @@ export const Profile = () => {
         params.name
       );
       snapshot ? setSnap(snapshot) : console.log("no user");
+      setIsLoading(false);
+
       // const userRef = collection(db, "User");
       // const q = query(userRef, where("username", "==", `${params.name}`));
       // const querySnapshot = await getDocs(q);
@@ -49,9 +52,25 @@ export const Profile = () => {
     getData();
   }, []);
 
+  if (loading) {
+    return (
+      <div>
+        <p>Loading</p>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div>
+        <h3>{error}</h3>
+      </div>
+    );
+  }
+
   return (
     <Wrapper>
-      {Object.keys(snap).length === 0 ? (
+      {isLoading && <p>Loading</p>}
+      {!isLoading && Object.keys(snap).length === 0 ? (
         <div>NO USER</div>
       ) : (
         <>

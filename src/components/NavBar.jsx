@@ -4,7 +4,6 @@ import { FiSettings } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Signup } from "../pages/Signup";
 import { Search } from "./Search";
 import { SignupPopup } from "./SignupPopup";
 import { SigninPopup } from "./SigninPopup";

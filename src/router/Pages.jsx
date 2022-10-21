@@ -3,20 +3,12 @@ import { Home } from "../pages/Home";
 import { Cuisine } from "../pages/Cuisine";
 import { Searched } from "../pages/Searched";
 import { Recipe } from "../pages/Recipe";
-import {
-  createBrowserRouter,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { NavBar } from "../components/NavBar";
 import { Category } from "../components/Category";
 import { Profile } from "../pages/Profile";
 import { Settings } from "../pages/Settings";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../utils/firebase";
+import { AddRecipe } from "../pages/AddRecipe";
 
 export const Layout = () => {
   return (
@@ -62,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:name",
         element: <Profile />,
+      },
+      {
+        path: "/addrecipe",
+        element: <AddRecipe />,
       },
     ],
   },
