@@ -49,7 +49,8 @@ const SuccesCheckmark = styled.div`
       content: "";
       height: 100px;
       position: absolute;
-      background: #ffffff;
+      background: #f5f5f5;
+
       transform: rotate(-45deg);
     }
 
@@ -98,7 +99,7 @@ const SuccesCheckmark = styled.div`
       height: 85px;
       position: absolute;
       transform: rotate(-45deg);
-      background-color: #ffffff;
+      background-color: #f5f5f5;
     }
   }
 

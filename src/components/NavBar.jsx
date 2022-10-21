@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GiKnifeFork } from "react-icons/gi";
+import { FiSettings } from "react-icons/fi";
+import { MdExitToApp } from "react-icons/md";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Signup } from "../pages/Signup";
@@ -11,7 +13,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import { CgProfile } from "react-icons/cg";
 import { doc, getDoc } from "firebase/firestore";
-
+import { NavbarDropdown } from "./DropdownMenu/NavbarDropdown";
+import "../styles/deneme.css";
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
@@ -50,6 +53,27 @@ export const NavBar = () => {
     }
   };
 
+  const dropDownMenu = [
+    {
+      id: 1,
+      name: "Profile",
+      to: `/profile/${snap.username}`,
+      icon: <CgProfile size={20} />,
+    },
+    {
+      id: 2,
+      name: "Settings",
+      to: `/settings`,
+      icon: <FiSettings size={20} />,
+    },
+    {
+      id: 3,
+      name: "Sign Out",
+      onClick: logOut,
+      icon: <MdExitToApp size={20} />,
+    },
+  ];
+
   return (
     <Nav>
       <div className="logo">
@@ -76,8 +100,8 @@ export const NavBar = () => {
         </>
       )}
       {user && (
-        <SignDiv>
-          <SignLink to={`/profile/${snap.username}`}>
+        <SignDiv className="signDiv">
+          <SignLink className="navbarPP" to={`/profile/${snap.username}`}>
             {snap.photoUrl ? (
               <img src={snap.photoUrl} alt="" className="avatar" />
             ) : (
@@ -90,15 +114,29 @@ export const NavBar = () => {
               />
             )}
           </SignLink>
+          <UlWrapper className="UlWrapper">
+            {dropDownMenu.map((item) => (
+              <NavbarDropdown key={item.id} {...item} />
+            ))}
+          </UlWrapper>
+
           <SignLink to="/addrecipe">Add recipe</SignLink>
-          <Link className="btn-logut" onClick={logOut}>
-            Sign out
-          </Link>
         </SignDiv>
       )}
     </Nav>
   );
 };
+
+const UlWrapper = styled.div`
+  z-index: 111;
+  background-color: white;
+  width: 180px;
+  margin-top: 15.2rem;
+  margin-left: 27px;
+  position: absolute;
+  border-radius: 10px;
+  display: none;
+`;
 
 const Logo = styled(Link)`
   text-decoration: none;
@@ -121,12 +159,22 @@ const Nav = styled.div`
     justify-content: center;
   }
 `;
+const SignDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .navbarPP:hover ~ .UlWrapper,
+  .UlWrapper:hover {
+    display: block;
+  }
+`;
 
 const SignLink = styled(Link)`
   text-decoration: none;
   font-size: 1rem;
   font-weight: 400;
   margin: 0rem 0.5rem;
+
   &:hover {
     color: #dc930b;
   }
@@ -139,20 +187,5 @@ const SignLink = styled(Link)`
     width: 40px;
     height: 40px;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px;
-  }
-`;
-
-const SignDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .btn-logut {
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 400;
-    margin: 0rem 0.5rem;
-    &:hover {
-      color: #dc930b;
-    }
   }
 `;
