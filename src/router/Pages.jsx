@@ -55,15 +55,15 @@ export const router = createBrowserRouter([
         path: "/profile/:name",
         element: <Profile />,
       },
-      {
-        path: "/addrecipe",
-        element: <AddRecipe />,
-      },
     ],
   },
   {
     path: "/settings",
     element: <Settings />,
+  },
+  {
+    path: "/addrecipe",
+    element: <AddRecipe />,
   },
 ]);
 

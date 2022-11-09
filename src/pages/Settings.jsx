@@ -107,7 +107,7 @@ export const Settings = () => {
         <>
           <div className="top">
             <button className="btnClose" onClick={btnClose}>
-              <AiOutlineClose />
+              <AiOutlineClose size={30} />
               <span>Close</span>
             </button>
           </div>
@@ -142,11 +142,7 @@ export const Settings = () => {
             <CustomButton name={"Update"} onClick={btnUpdate} />
           </form>
 
-          {updateStatus && (
-            <>
-              <CheckmarkSucces />
-            </>
-          )}
+          {updateStatus && <CheckmarkSucces />}
         </>
       )}
       {!user && (
@@ -178,6 +174,9 @@ const Wrapper = styled.div`
 
   .top {
     width: 450px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   .inputAbout {

@@ -18,10 +18,20 @@ export const Profile = () => {
 
   const getData = async () => {
     if (user) {
-      console.log("profile get snap use effect1");
+      console.log("profile get snap use effect");
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-      setSnap(snapshot);
-      setIsLoading(false);
+      if (snapshot.username === params.name) {
+        setSnap(snapshot);
+        setIsLoading(false);
+      } else {
+        let snapshot = await getCollectionByField(
+          "User",
+          "username",
+          params.name
+        );
+        snapshot ? setSnap(snapshot) : console.log("no user");
+        setIsLoading(false);
+      }
     } else {
       let snapshot = await getCollectionByField(
         "User",
@@ -50,7 +60,7 @@ export const Profile = () => {
   };
   useEffect(() => {
     getData();
-  }, []);
+  }, [params]); //burasi degisti bostu
 
   if (loading) {
     return (

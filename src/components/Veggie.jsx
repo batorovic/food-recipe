@@ -35,7 +35,7 @@ export const Veggie = () => {
         <Splide
           options={{
             perPage: 3,
-            arrows: false,
+            arrows: true,
             pagination: false,
             drag: "free",
             gap: "5rem",

@@ -14,9 +14,12 @@ import { CgProfile } from "react-icons/cg";
 import { doc, getDoc } from "firebase/firestore";
 import { NavbarDropdown } from "./DropdownMenu/NavbarDropdown";
 import "../styles/deneme.css";
+import { ForgotPassword } from "./ForgotPassword";
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
+  const [forgotPasswordPopup, setforgotPasswordPopup] = useState(false);
+
   const [user, loading] = useAuthState(auth);
   const [snap, setSnap] = useState({});
 
@@ -80,10 +83,11 @@ export const NavBar = () => {
         <Logo to={`/`}>recipess</Logo>
       </div>
       <Search />
-
-      {!user && (
+      {/* {!user*/}
+      {!user?.emailVerified && (
         <>
           <SigninPopup
+            setforgotPasswordPopup={setforgotPasswordPopup}
             trigger={signinPopup}
             setTrigger={setSigninPopup}
           ></SigninPopup>
@@ -96,9 +100,14 @@ export const NavBar = () => {
             <span>/</span>
             <SignLink onClick={() => setSignupPopup(true)}>Sign up</SignLink>
           </SignDiv>
+
+          <ForgotPassword
+            trigger={forgotPasswordPopup}
+            setTrigger={setforgotPasswordPopup}
+          ></ForgotPassword>
         </>
       )}
-      {user && (
+      {user?.emailVerified && (
         <SignDiv className="signDiv">
           <SignLink className="navbarPP" to={`/profile/${snap.username}`}>
             {snap.photoUrl ? (
@@ -147,7 +156,7 @@ const Nav = styled.div`
   padding: 3rem 0rem;
   display: flex;
   justify-content: space-between;
-  /* justify-content: center; */
+  /* justify-content: center; //? */
   align-items: center;
   svg {
     font-size: 2rem;

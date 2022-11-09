@@ -13,6 +13,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../utils/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ForgotPassword } from "./ForgotPassword";
 
 export const SigninPopup = (props) => {
   //check user
@@ -77,6 +78,7 @@ export const SigninPopup = (props) => {
         posts: [],
         photoUrl: user.photoURL,
         username: user.uid,
+        uid: user.uid,
         bannerPhotoUrl:
           "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/banner%2FFdo6bnFXkAEGtHV.jpg?alt=media&token=ef47dc00-c245-4fbb-863d-4e116f238db9",
       });
@@ -120,7 +122,15 @@ export const SigninPopup = (props) => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Link className="forgotPassword" to="/">
+            <Link
+              className="forgotPassword"
+              to={"/"}
+              onClick={() => {
+                props.setTrigger(false);
+                setError(false);
+                props.setforgotPasswordPopup(true);
+              }}
+            >
               Forgot Password
             </Link>
 

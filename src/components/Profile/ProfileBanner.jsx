@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillCamera } from "react-icons/ai";
 import { TiEdit } from "react-icons/ti";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { auth } from "../../utils/firebase";
 import { FileUpload } from "../Inputs/FileUpload";
 import { SigninPopup } from "../SigninPopup";
 
@@ -13,6 +15,7 @@ export const ProfileBanner = (props) => {
   let params = useParams();
   const [signinPopup, setSigninPopup] = useState(false);
   const [follow, setFollowStatus] = useState(false);
+  const [user, loading] = useAuthState(auth);
 
   const navigateToSettings = () => {
     navigate(`/settings`);
@@ -29,7 +32,7 @@ export const ProfileBanner = (props) => {
       {/* signin popup */}
       <SigninPopup trigger={signinPopup} setTrigger={setSigninPopup} />
       <img src={props.snapshot.bannerPhotoUrl} alt="" />
-      {props.user && (
+      {user?.uid === props.snapshot.uid && (
         <div className="imgSelect">
           <label htmlFor="fileBanner">
             <AiFillCamera size={25} /> Update Your Banner Image
@@ -44,23 +47,23 @@ export const ProfileBanner = (props) => {
       )}
       <div className="userNameSection">
         <span id="username">{params.name}</span>
-        {props.user &&
-          (params.name === props.user.uid ||
-            params.name === props.snapshot.username) && (
-            <TiEdit
-              className="userNameEdit"
-              size={25}
-              onClick={navigateToSettings}
-            />
-          )}
+        {user?.uid === props.snapshot.uid && (
+          <TiEdit
+            className="userNameEdit"
+            size={25}
+            onClick={navigateToSettings}
+          />
+        )}
 
         {/* Daha sonradan buraya user varsa ve takip etmiyorsa kosulu eklenecek */}
-        {!props.user && (
+        {(!user || user?.uid !== props.snapshot.uid) && (
           <button
             className="btnFollow"
             onClick={() => {
               setFollowStatus(true);
-              setSigninPopup(true);
+              user?.uid !== props.snapshot.uid
+                ? alert("user is exists and pressed follow button")
+                : setSigninPopup(true);
             }}
           >
             {followButtonText}

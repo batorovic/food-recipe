@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  sendEmailVerification,
 } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../utils/firebase";
@@ -35,6 +36,9 @@ export const SignupPopup = (props) => {
         // Signed in
         const user = userCredential.user;
         // console.log(user?.uid);
+        sendEmailVerification(user).then(
+          alert("Email Verification has been sent")
+        );
 
         await setDoc(doc(db, "User", `${user.uid}`), {
           about: `Hello! welcome to my page`,
@@ -45,10 +49,12 @@ export const SignupPopup = (props) => {
           name: "",
           numberOfPosts: 0,
           posts: [],
-          photoUrl: user.photoURL,
+          uid: user.uid,
+          photoUrl:
+            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultAvatar.png?alt=media&token=aac8b48a-2ce0-4313-8758-662598700004",
           username: username,
           bannerPhotoUrl:
-            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/banner%2FFdo6bnFXkAEGtHV.jpg?alt=media&token=ef47dc00-c245-4fbb-863d-4e116f238db9",
+            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultBanner.jpg?alt=media&token=b74c7775-bb92-4d90-b7b9-75aa1ae834b7",
         });
       })
       .catch((error) => {
@@ -80,7 +86,7 @@ export const SignupPopup = (props) => {
             setError(false);
           }}
         />
-        <Wrapper>
+        <Wrapper style={{ height: "25rem" }}>
           <h3>Sign Up</h3>
           <form onSubmit={handleSignup}>
             {/* {error && <span>{errorMessage}</span>} */}
@@ -104,7 +110,7 @@ export const SignupPopup = (props) => {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <button>Sign up</button>
+            <button style={{ marginTop: "2rem" }}>Sign up</button>
           </form>
           {/* <div className="googleLogin">
             <button onClick={googleLogin}>

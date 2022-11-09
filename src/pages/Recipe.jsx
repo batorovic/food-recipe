@@ -9,26 +9,26 @@ export const Recipe = () => {
   let params = useParams();
 
   const fetchDetails = async () => {
-    // const data = await fetch(
-    //   `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
-    // );
-    // const detailData = await data.json();
-    // setDetails(detailData);
+    const data = await fetch(
+      `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
+    );
+    const detailData = await data.json();
+    setDetails(detailData);
 
-    // checki kaldır simdilik dursun hep req atmasin diye duruyor
-    const check = localStorage.getItem("recipe");
-    if (check) {
-      setDetails(JSON.parse(check));
-    } else {
-      const data = await fetch(
-        `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
-      );
-      const detailData = await data.json();
+    // // checki kaldır simdilik dursun hep req atmasin diye duruyor
+    // const check = localStorage.getItem("recipe");
+    // if (check) {
+    //   setDetails(JSON.parse(check));
+    // } else {
+    //   const data = await fetch(
+    //     `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
+    //   );
+    //   const detailData = await data.json();
 
-      localStorage.setItem("recipe", JSON.stringify(detailData));
+    //   localStorage.setItem("recipe", JSON.stringify(detailData));
 
-      setDetails(detailData);
-    }
+    //   setDetails(detailData);
+    // }
   };
 
   useEffect(() => {

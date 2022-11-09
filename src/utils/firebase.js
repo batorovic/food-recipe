@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import {
   collection,
+  getDoc,
   getDocs,
   getFirestore,
   query,
@@ -48,4 +49,21 @@ export const getCollectionByField = async (
     data = doc.data();
   });
   return data;
+};
+
+export const getCollectionSnapshot = async (collection, uid) => {
+  // const snapshot = (await getDoc(doc(db, `${collection}`, `${uid}`))).data();
+  // return snapshot;
+  return (await getDoc(doc(db, `${collection}`, `${uid}`))).data();
+};
+
+export const signOutFromApp = () => {
+  // sign out from app
+  signOut(auth)
+    .then(() => {
+      console.log("signed out");
+    })
+    .catch((error) => {
+      console.log("error");
+    });
 };

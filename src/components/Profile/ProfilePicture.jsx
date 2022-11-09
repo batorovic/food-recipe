@@ -1,13 +1,17 @@
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillCamera } from "react-icons/ai";
 import styled from "styled-components";
+import { auth } from "../../utils/firebase";
 import { FileUpload } from "../Inputs/FileUpload";
 
 export const ProfilePicture = (props) => {
+  const [user, loading] = useAuthState(auth);
+
   return (
     <ProfilePictureWrapper>
       <img src={props.snap.photoUrl} alt="" />
-      {props.user && (
+      {props.snap.uid === user?.uid && (
         <>
           <div className="profilePicture">
             <label htmlFor="fileProfilePicture">
