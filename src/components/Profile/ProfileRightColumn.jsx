@@ -11,7 +11,7 @@ export const ProfileRightColumn = (props) => {
         getData={props.getData}
         user={props.user}
       />
-      <ProfileStats snap={props.snap} user={props.user} />
+      <ProfileStats snap={props.snap} user={props.user} stat={props.stat} />
     </ProfileRightColumnWrapper>
   );
 };

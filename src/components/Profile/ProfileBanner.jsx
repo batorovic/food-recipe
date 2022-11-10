@@ -1,10 +1,22 @@
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  FieldValue,
+  increment,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { AiFillCamera } from "react-icons/ai";
 import { TiEdit } from "react-icons/ti";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { auth } from "../../utils/firebase";
+import {
+  auth,
+  getCollectionByField,
+  getCollectionSnapshot,
+  updateField,
+} from "../../utils/firebase";
 import { FileUpload } from "../Inputs/FileUpload";
 import { SigninPopup } from "../SigninPopup";
 
@@ -16,16 +28,72 @@ export const ProfileBanner = (props) => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [follow, setFollowStatus] = useState(false);
   const [user, loading] = useAuthState(auth);
+  const [currentUserSnap, setCurrentUserSnap] = useState({});
 
   const navigateToSettings = () => {
     navigate(`/settings`);
   };
 
-  // useEffect(() => {
-  //   if (follow) {
-  //     console.log("follow status");
-  //   }
-  // }, [signinPopup]);
+  const btnFollowHandleSubmit = async () => {
+    // //hatalı setstar olmadı tekrar bak
+    // let followedUser = await getCollectionByField("User", "username", "cactus");
+    // alert("user is  exists and pressed follow button");
+    // if (followButtonText === "Follow") {
+    //   props.setStat(false);
+    //   console.log("yo");
+    //   await updateField("User", followedUser.uid, {
+    //     followers: increment(-1),
+    //   });
+    // } else if (followButtonText === "Unfollow") {
+    //   if (
+    //     await updateField("User", followedUser.uid, {
+    //       followers: increment(1),
+    //     })
+    //   ) {
+    //     props.setStat(true);
+    //   }
+    // }
+    console.log(props.snapshot.uid);
+
+    if (followButtonText === "Follow") {
+      await updateField("User", currentUserSnap.uid, {
+        following: arrayUnion(props.snapshot.uid),
+      });
+
+      await updateField("User", props.snapshot.uid, {
+        followers: increment(1),
+      });
+      setFollowButtonText("Unfollow");
+    } else if (followButtonText === "Unfollow") {
+      await updateField("User", props.snapshot.uid, {
+        followers: increment(-1),
+      });
+      if (
+        await updateField("User", user.uid, {
+          following: arrayRemove(props.snapshot.uid),
+        })
+      ) {
+        setFollowButtonText("Follow");
+      }
+    }
+
+    props.setStat(!props.stat);
+  };
+
+  useEffect(() => {
+    console.log("follow status");
+    async function setFollowText() {
+      getCollectionSnapshot("User", `${user.uid}`).then((res) => {
+        setCurrentUserSnap(res);
+        res.following.forEach((element) => {
+          if (element === props.snapshot.uid) {
+            setFollowButtonText("Unfollow");
+          }
+        });
+      });
+    }
+    setFollowText();
+  }, [props.snapshot, setFollowButtonText]);
 
   return (
     <ProfileBannerWrapper>
@@ -56,13 +124,16 @@ export const ProfileBanner = (props) => {
         )}
 
         {/* Daha sonradan buraya user varsa ve takip etmiyorsa kosulu eklenecek */}
+        {console.log(user?.uid.length > 0 && user?.uid !== props.snapshot.uid)}
+
         {(!user || user?.uid !== props.snapshot.uid) && (
           <button
             className="btnFollow"
             onClick={() => {
-              setFollowStatus(true);
-              user?.uid !== props.snapshot.uid
-                ? alert("user is exists and pressed follow button")
+              // setFollowStatus(!follow);
+              // user?.uid !== props.snapshot.uid
+              user?.uid.length > 0 && user?.uid !== props.snapshot.uid
+                ? btnFollowHandleSubmit()
                 : setSigninPopup(true);
             }}
           >

@@ -12,6 +12,8 @@ export const Profile = () => {
   const [user, loading, error] = useAuthState(auth);
   const [snap, setSnap] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [stat, setStat] = useState(false);
+
   // const [followButtonText, setFollowButtonText] = useState("Follow");
 
   let params = useParams();
@@ -88,10 +90,18 @@ export const Profile = () => {
             snapshot={snap}
             getData={getData}
             user={user}
+            setStat={setStat}
+            stat={stat}
+
             // followButtonText={followButtonText}
           />
           <ProfileLeftColumn snap={snap} />
-          <ProfileRightColumn snap={snap} getData={getData} user={user} />
+          <ProfileRightColumn
+            snap={snap}
+            getData={getData}
+            user={user}
+            stat={stat}
+          />
         </>
       )}
     </Wrapper>
