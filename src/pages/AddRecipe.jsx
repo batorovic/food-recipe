@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, getCollectionSnapshot, signOutFromApp } from "../utils/firebase";
+import {
+  auth,
+  db,
+  getCollectionSnapshot,
+  setCollection,
+  signOutFromApp,
+  updateField,
+} from "../utils/firebase";
 import styled from "styled-components";
 import { AddRecipeTextArea } from "../components/AddRecipe/TextArea/AddRecipeTextArea";
 import { AddRecipeImages } from "../components/AddRecipe/AddRecipeImages";
@@ -17,6 +24,14 @@ import { signOut } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { GiKnifeFork } from "react-icons/gi";
 import { motion } from "framer-motion";
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { uploadFiles } from "../utils/uploadFile";
 
 export const AddRecipe = (props) => {
   const navigate = useNavigate();
@@ -36,6 +51,7 @@ export const AddRecipe = (props) => {
     cookTime: "5min",
   });
   const [snapshot, setSnapshot] = useState({});
+
   useEffect(() => {
     function getSnapshot() {
       console.log("add recipe use effect");
@@ -46,7 +62,7 @@ export const AddRecipe = (props) => {
     }
 
     getSnapshot();
-  }, [user]);
+  }, [user, setSnapshot]);
 
   const onChange = (e) => {
     setTextAreaValue({ ...textAreaValue, [e.target.name]: e.target.value });
@@ -117,15 +133,52 @@ export const AddRecipe = (props) => {
     e.preventDefault();
   };
 
-  function onCLickButton(e) {
-    console.log(textAreaValue);
-    console.log(file[coverImageIndex]);
-    console.log(reqValues);
+  async function onCLickButton(e) {
+    // console.log(textAreaValue);
+    // console.log(file[coverImageIndex]);
+    // console.log(reqValues);
+
+    //nested icin ornek ref dursun
+    // getCollectionSnapshot(
+    //   "post",
+    //   "bykfByv2mvwVRRUlwtVM/comments/ybfomAgrDYZiqibubIA8"
+    // ).then((result) => {
+    //   console.log(result);
+    // });
+
+    //sets collection and returns the added collection id
+    const documentId = await setCollection("post", {
+      brief: textAreaValue.brief.split("\n"),
+      ingredient: textAreaValue.ingredients.split("\n"),
+      instruction: textAreaValue.instructions.split("\n"),
+      requierements: reqValues,
+      title: textAreaValue.title,
+      uid: user?.uid,
+      coverImagePath: "",
+      filePaths: [],
+      timestamp: serverTimestamp(),
+    });
+
+    // upload caliisyor
+    uploadFiles(
+      file,
+      user?.uid,
+      `post/${documentId}`,
+      file[coverImageIndex].name,
+      documentId
+    );
+
+    // updateField("post", documentId, {
+    //   coverImagePath: "213123",
+    //   filePaths: filePaths.imagePath,
+    // }).then((e) => {
+    //   console.log(filePaths);
+    // });
   }
   return (
     <Main>
       {!user && <div>NO ACCES</div>}
-      {user && (
+      {user && Object.keys(snapshot).length > 0 && (
         <motion.div
           animate={{ opacity: 1 }}
           initial={{ opacity: 0 }}

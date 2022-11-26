@@ -27,30 +27,30 @@ export const ProfileLeftColumn = (props) => {
           className={toggleState === 1 ? "tabs active-tabs" : "tabs"}
           onClick={() => toggleTab(1)}
         >
-          Tariflerim
+          My Recipes
         </button>
         <button
           className={toggleState === 2 ? "tabs active-tabs" : "tabs"}
           onClick={() => toggleTab(2)}
         >
-          Tarif Defterim
+          My Recipe Book
         </button>
       </div>
       <div className="content-tabs">
         <div
           className={toggleState === 1 ? "content active-content" : "content"}
         >
-          <h2>Tariflerim</h2>
+          <h2>My Recipes</h2>
           <hr />
-          <p>Tariflerim content</p>
+          <p>Recipe Content</p>
         </div>
 
         <div
           className={toggleState === 2 ? "content active-content" : "content"}
         >
-          <h2>Tarif Defterim</h2>
+          <h2>My Recipe Book</h2>
           <hr />
-          <p>Tarif Defterim content</p>
+          <p>My Recipe Book Content</p>
         </div>
       </div>
     </BottomLeftSide>

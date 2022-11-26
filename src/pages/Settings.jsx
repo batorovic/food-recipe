@@ -93,6 +93,7 @@ export const Settings = () => {
         about: about,
       })
     ) {
+      exportUsername(values["username"]);
       setUpdateStatus(true);
       setTimeout(() => {
         setUpdateStatus(false);
@@ -153,6 +154,9 @@ export const Settings = () => {
     </Wrapper>
   );
 };
+export function exportUsername(e) {
+  return e;
+}
 
 const Wrapper = styled.div`
   margin-top: 2rem;

@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { ProfileBanner } from "../components/Profile/ProfileBanner";
 import { ProfileLeftColumn } from "../components/Profile/ProfileLeftColumn";
 import { ProfileRightColumn } from "../components/Profile/ProfileRightColumn";
+import { exportUsername } from "./Settings";
 
 export const Profile = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -22,18 +23,24 @@ export const Profile = () => {
     if (user) {
       console.log("profile get snap use effect");
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-      if (snapshot.username === params.name) {
-        setSnap(snapshot);
-        setIsLoading(false);
-      } else {
-        let snapshot = await getCollectionByField(
-          "User",
-          "username",
-          params.name
-        );
-        snapshot ? setSnap(snapshot) : console.log("no user");
-        setIsLoading(false);
-      }
+      setSnap(snapshot);
+      setIsLoading(false);
+      params.name = snapshot.username;
+
+      // asagidaki mantigi neden yaptım gram fikrim yok amk
+      
+      // if (snapshot.username === params.name) {
+      //   setSnap(snapshot);
+      //   setIsLoading(false);
+      // } else {
+      //   let snapshot = await getCollectionByField(
+      //     "User",
+      //     "username",
+      //     params.name
+      //   );
+      //   snapshot ? setSnap(snapshot) : console.log("no user");
+      //   setIsLoading(false);
+      // }
     } else {
       let snapshot = await getCollectionByField(
         "User",

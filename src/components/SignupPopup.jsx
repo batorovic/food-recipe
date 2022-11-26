@@ -50,6 +50,7 @@ export const SignupPopup = (props) => {
           numberOfPosts: 0,
           posts: [],
           uid: user.uid,
+          following: [],
           photoUrl:
             "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultAvatar.png?alt=media&token=aac8b48a-2ce0-4313-8758-662598700004",
           username: username,

@@ -27,7 +27,7 @@ export const ProfileStats = (props) => {
           console.log("profile status count use effect");
           setFollowerCount(result.followers);
           setFavoritesCount(result.favorites.length);
-          setRecipeCount(result.posts.length);
+          // setRecipeCount(result.posts.length);
         });
       }
     }
@@ -46,7 +46,8 @@ export const ProfileStats = (props) => {
           </div>
           <div className="recipeCount">
             {/* <span className="spanCount">{recipeCount}</span> */}
-            <span className="spanCount">{snap.posts.length}</span>
+            {/* <span className="spanCount">{snap.posts.length}</span> */}
+            <span className="spanCount">{snap.numberOfPosts}</span>
 
             <span>Recipes</span>
           </div>

@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { Search } from "./Search";
 import { SignupPopup } from "./SignupPopup";
 import { SigninPopup } from "./SigninPopup";
-import { auth, db } from "../utils/firebase";
+import { auth, db, getCollectionSnapshot } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import { CgProfile } from "react-icons/cg";
@@ -45,10 +45,16 @@ export const NavBar = () => {
       console.log("navbar use effect");
       const docRef = doc(db, "User", `${user.uid}`);
       const docSnap = await getDoc(docRef);
+      // getCollectionSnapshot("User", `${user.uid}`).then((result) => {
+      //   console.log(result);
+      //   setSnap(result);
+      // });
 
       if (docSnap.exists()) {
         setSnap(docSnap.data());
       } else {
+        getSnap();
+
         // doc.data() will be undefined in this case
         console.log("No such document!");
       }

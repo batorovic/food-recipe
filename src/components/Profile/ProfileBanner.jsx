@@ -53,7 +53,7 @@ export const ProfileBanner = (props) => {
     //     props.setStat(true);
     //   }
     // }
-    console.log(props.snapshot.uid);
+    // console.log(props.snapshot.uid);
 
     if (followButtonText === "Follow") {
       await updateField("User", currentUserSnap.uid, {
@@ -82,17 +82,19 @@ export const ProfileBanner = (props) => {
 
   useEffect(() => {
     console.log("follow status");
-    async function setFollowText() {
-      getCollectionSnapshot("User", `${user.uid}`).then((res) => {
-        setCurrentUserSnap(res);
-        res.following.forEach((element) => {
-          if (element === props.snapshot.uid) {
-            setFollowButtonText("Unfollow");
-          }
+    if (user) {
+      async function setFollowText() {
+        getCollectionSnapshot("User", `${user.uid}`).then((res) => {
+          setCurrentUserSnap(res);
+          res.following.forEach((element) => {
+            if (element === props.snapshot.uid) {
+              setFollowButtonText("Unfollow");
+            }
+          });
         });
-      });
+      }
+      setFollowText();
     }
-    setFollowText();
   }, [props.snapshot, setFollowButtonText]);
 
   return (

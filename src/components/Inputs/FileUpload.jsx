@@ -66,6 +66,7 @@ export const FileUpload = (props) => {
             }
             console.log("basarili upload get snaphot");
             props.getData();
+            setFile(""); //--
           });
         }
       );

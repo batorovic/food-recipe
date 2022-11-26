@@ -1,11 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
 import {
+  addDoc,
   collection,
   getDoc,
   getDocs,
   getFirestore,
   query,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -66,4 +68,14 @@ export const signOutFromApp = () => {
     .catch((error) => {
       console.log("error");
     });
+};
+
+export const setCollection = async (name, data) => {
+  let id = "";
+  const ref = doc(collection(db, `${name}`));
+  await setDoc(ref, data).then(() => {
+    console.log("post succesfully added.");
+    id = ref.id;
+  });
+  return id;
 };
