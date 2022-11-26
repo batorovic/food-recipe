@@ -32,7 +32,9 @@ export const AddRecipeImages = (props) => {
             style={{ display: "none" }}
             accept="image/*"
             onChange={(e) => {
-              setFile([...file, e.target.files[0]]);
+              if (e.target.files[0]) {
+                setFile([...file, e.target.files[0]]);
+              }
             }}
           />
         </div>
@@ -47,7 +49,7 @@ export const AddRecipeImages = (props) => {
               <figure>
                 <div style={{ marginBottom: "-30px" }}>
                   <img
-                    src={URL.createObjectURL(item)}
+                    src={(window.URL || window.webkitURL).createObjectURL(item)}
                     width={140}
                     height={140}
                     alt="images"

@@ -57,7 +57,6 @@ export const AddRecipe = (props) => {
       console.log("add recipe use effect");
       getCollectionSnapshot("User", user?.uid).then((result) => {
         setSnapshot(result);
-        setUsername(result.username);
       });
     }
 
@@ -112,7 +111,7 @@ export const AddRecipe = (props) => {
     {
       id: 1,
       name: "Profile",
-      to: `/profile/${username}`,
+      to: `/profile/${snapshot.username}`,
       icon: <CgProfile size={20} />,
     },
     {
@@ -129,23 +128,8 @@ export const AddRecipe = (props) => {
     },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  };
-
-  async function onCLickButton(e) {
-    // console.log(textAreaValue);
-    // console.log(file[coverImageIndex]);
-    // console.log(reqValues);
-
-    //nested icin ornek ref dursun
-    // getCollectionSnapshot(
-    //   "post",
-    //   "bykfByv2mvwVRRUlwtVM/comments/ybfomAgrDYZiqibubIA8"
-    // ).then((result) => {
-    //   console.log(result);
-    // });
-
     //sets collection and returns the added collection id
     const documentId = await setCollection("post", {
       brief: textAreaValue.brief.split("\n"),
@@ -166,13 +150,19 @@ export const AddRecipe = (props) => {
       `post/${documentId}`,
       file[coverImageIndex].name,
       documentId
-    );
+    ).then(() => console.log("1asd"));
+  };
 
-    // updateField("post", documentId, {
-    //   coverImagePath: "213123",
-    //   filePaths: filePaths.imagePath,
-    // }).then((e) => {
-    //   console.log(filePaths);
+  async function onCLickButton(e) {
+    // console.log(textAreaValue);
+    // console.log(file[coverImageIndex]);
+    // console.log(reqValues);
+    //nested icin ornek ref dursun
+    // getCollectionSnapshot(
+    //   "post",
+    //   "bykfByv2mvwVRRUlwtVM/comments/ybfomAgrDYZiqibubIA8"
+    // ).then((result) => {
+    //   console.log(result);
     // });
   }
   return (
