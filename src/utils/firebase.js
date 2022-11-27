@@ -28,6 +28,7 @@ export const auth = getAuth();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
+
 export const updateField = async (collection, uid, updatedField) => {
   let status = false;
   const document = doc(db, `${collection}`, `${uid}`);
@@ -78,4 +79,19 @@ export const setCollection = async (name, data) => {
     id = ref.id;
   });
   return id;
+};
+
+export const getCollectionByFieldInArray = async (
+  collectionName,
+  field,
+  searchedField
+) => {
+  let data = [];
+  const userRef = collection(db, `${collectionName}`);
+  const q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+  return data;
 };

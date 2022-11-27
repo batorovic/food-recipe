@@ -1,11 +1,35 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { TiEdit } from "react-icons/ti";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import {
+  auth,
+  getCollectionByField,
+  getCollectionByFieldInArray,
+} from "../../utils/firebase";
+import { motion } from "framer-motion";
 
 export const ProfileLeftColumn = (props) => {
+  const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
   const [toggleState, setToggleState] = useState(1); //1 Tariflerim 2 Tarif Defterim
+  const [postSnap, setPostSnap] = useState({});
+  let params = useParams();
+
+  useEffect(() => {
+    console.log("get post use effect");
+
+    async function tester1() {
+      await getCollectionByFieldInArray("post", "uid", `${params.name}`).then(
+        (e) => {
+          setPostSnap(e);
+        }
+      );
+    }
+    tester1();
+  }, [user, setPostSnap]);
 
   const navigateToSettings = () => {
     navigate(`/settings`);
@@ -42,7 +66,25 @@ export const ProfileLeftColumn = (props) => {
         >
           <h2>My Recipes</h2>
           <hr />
-          <p>Recipe Content</p>
+          {/* <p>Recipe Content</p> */}
+          <Grid>
+            {Object.keys(postSnap).length > 0 &&
+              postSnap.map((item) => {
+                return (
+                  <CuisineCard key={item.id}>
+                    <Link to={`/recipe/${item.id}`}>
+                      <img
+                        src={item.coverImagePath}
+                        alt=""
+                        width={220}
+                        height={220}
+                      />
+                      <h4>{item.title}</h4>
+                    </Link>
+                  </CuisineCard>
+                );
+              })}
+          </Grid>
         </div>
 
         <div
@@ -130,6 +172,7 @@ const BottomLeftSide = styled.div`
   }
   .content-tabs {
     flex-grow: 1;
+    width: 600px; //sonradan eklenen
   }
   .content {
     padding: 20px;
@@ -156,5 +199,33 @@ const BottomLeftSide = styled.div`
   button {
     background: none;
     border: none;
+  }
+`;
+
+const Grid = styled.div`
+  margin-top: 55px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-gap: 2rem;
+`;
+
+const CuisineCard = styled.div`
+  display: flex;
+  img {
+    /* width: 100%; */
+    border-radius: 2rem;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  h4 {
+    text-align: center;
+    padding: 1rem;
   }
 `;

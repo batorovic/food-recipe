@@ -2,18 +2,41 @@ import { React, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+import "react-slideshow-image/dist/styles.css";
+import { Slide } from "react-slideshow-image";
+
+import {
+  getCollectionByField,
+  getCollectionByFieldInArray,
+} from "../utils/firebase";
+import "../styles/deneme.css";
 
 export const Recipe = () => {
   const [details, setDetails] = useState({});
   const [activeTab, setActiveTab] = useState("instructions");
+  const [snap, setSnap] = useState({});
+  const [slideImages, setSlideImages] = useState([]);
+  const [swipe, setSwipe] = useState(false);
   let params = useParams();
+  let images = [];
 
   const fetchDetails = async () => {
-    const data = await fetch(
-      `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
-    );
-    const detailData = await data.json();
-    setDetails(detailData);
+    console.log("recipe fetch details use effect");
+    //apiden cekmek
+    // const data = await fetch(
+    //   `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
+    // );
+    // const detailData = await data.json();
+    // setDetails(detailData);
+
+    await getCollectionByField("post", "id", `${params.name}`).then((e) => {
+      setSnap(e);
+      setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
+      e.filePaths.forEach((element) => {
+        setSlideImages((slideImages) => [...slideImages, element]);
+        setSwipe(true);
+      });
+    });
 
     // // checki kaldır simdilik dursun hep req atmasin diye duruyor
     // const check = localStorage.getItem("recipe");
@@ -33,49 +56,82 @@ export const Recipe = () => {
 
   useEffect(() => {
     fetchDetails();
-  }, [params.name]);
+  }, [params.name, setSnap, setSlideImages]);
 
   return (
-    <DetailWrapper
-      animate={{ opacity: 1 }}
-      initial={{ opacity: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div>
-        <h2>{details.title}</h2>
-        <img src={details.image} alt="" />
-      </div>
-
-      <Info>
-        <Button
-          className={activeTab === "instructions" ? "active" : ""}
-          onClick={() => setActiveTab("instructions")}
+    <>
+      {Object.keys(snap).length > 0 && (
+        <DetailWrapper
+          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          Instrucitons
-        </Button>
-        <Button
-          className={activeTab === "ingredients" ? "active" : ""}
-          onClick={() => setActiveTab("ingredients")}
-        >
-          Ingredients
-        </Button>
-        {activeTab === "instructions" && (
-          <div>
-            <h3 dangerouslySetInnerHTML={{ __html: details.summary }}></h3>
-            <h3 dangerouslySetInnerHTML={{ __html: details.instructions }}></h3>
+          <div
+            className="slide-container"
+            style={{ width: "556px", height: "370px" }}
+          >
+            <Slide arrows={swipe} canSwipe={swipe} autoplay={swipe}>
+              {slideImages.map((slideImage, index) => (
+                <div className="each-slide-effect" key={index}>
+                  <div
+                    key={index}
+                    style={{
+                      backgroundImage: `url(${slideImage})`,
+                    }}
+                  ></div>
+                </div>
+              ))}
+            </Slide>
           </div>
-        )}
+          <Info>
+            <Button
+              className={activeTab === "instructions" ? "active" : ""}
+              onClick={() => setActiveTab("instructions")}
+            >
+              Instrucitons
+            </Button>
+            <Button
+              className={activeTab === "ingredients" ? "active" : ""}
+              onClick={() => setActiveTab("ingredients")}
+            >
+              Ingredients
+            </Button>
+            {activeTab === "instructions" && (
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: "2rem",
+                  }}
+                >
+                  <h3>Serves: {snap.requierements.serves}</h3>
+                  <h3>Cook Time: {snap.requierements.cookTime}</h3>
+                  {snap.requierements.prepTime && (
+                    <h3>Prep Time: {snap.requierements.prepTime}</h3>
+                  )}
+                </div>
+                <h3 dangerouslySetInnerHTML={{ __html: snap.brief }}></h3>
+                <h3 dangerouslySetInnerHTML={{ __html: snap.instruction }}></h3>
+              </div>
+            )}
 
-        {activeTab === "ingredients" && (
-          <ul>
-            {details.extendedIngredients.map((ingredient) => (
-              <li key={ingredient.id}>{ingredient.original}</li>
-            ))}
-          </ul>
-        )}
-      </Info>
-    </DetailWrapper>
+            {activeTab === "ingredients" && (
+              <ul>
+                {snap.ingredient.map((ingredient) => (
+                  <li key={ingredient.id}>
+                    {/* {apiden otomatik ekledigim icin admin normal admin eklediğinde onun adminuser diye uid acariz} */}
+                    {snap.uid === "admin" ? ingredient.original : ingredient}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Info>
+        </DetailWrapper>
+      )}
+    </>
   );
 };
 

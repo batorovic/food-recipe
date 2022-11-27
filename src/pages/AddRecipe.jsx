@@ -27,6 +27,7 @@ import { motion } from "framer-motion";
 import {
   doc,
   getDoc,
+  increment,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -140,6 +141,7 @@ export const AddRecipe = (props) => {
       uid: user?.uid,
       coverImagePath: "",
       filePaths: [],
+      documentId: "",
       timestamp: serverTimestamp(),
     });
 
@@ -151,6 +153,9 @@ export const AddRecipe = (props) => {
       file[coverImageIndex].name,
       documentId
     ).then(() => console.log("1asd"));
+
+    updateField("post", documentId, { documentId: documentId });
+    updateField("User", user?.uid, { numberOfPosts: increment(1) });
   };
 
   async function onCLickButton(e) {

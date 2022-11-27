@@ -12,6 +12,7 @@ export const Popular = () => {
   }, []);
 
   const getPopular = async () => {
+    //vtye kaydedilecek.
     const check = localStorage.getItem("popular");
 
     if (check) {
