@@ -6,10 +6,13 @@ import "react-slideshow-image/dist/styles.css";
 import { Slide } from "react-slideshow-image";
 
 import {
+  db,
   getCollectionByField,
   getCollectionByFieldInArray,
 } from "../utils/firebase";
 import "../styles/deneme.css";
+import { CommentSection } from "../components/Comment/CommentSection";
+import { collection, getDocs } from "firebase/firestore";
 
 export const Recipe = () => {
   const [details, setDetails] = useState({});
@@ -17,6 +20,8 @@ export const Recipe = () => {
   const [snap, setSnap] = useState({});
   const [slideImages, setSlideImages] = useState([]);
   const [swipe, setSwipe] = useState(false);
+  const [commentSnap, setCommentSnapshot] = useState([]);
+
   let params = useParams();
   let images = [];
 
@@ -29,14 +34,24 @@ export const Recipe = () => {
     // const detailData = await data.json();
     // setDetails(detailData);
 
-    await getCollectionByField("post", "id", `${params.name}`).then((e) => {
-      setSnap(e);
-      setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
-      e.filePaths.forEach((element) => {
-        setSlideImages((slideImages) => [...slideImages, element]);
-        setSwipe(true);
-      });
-    });
+    await getCollectionByField("post", "id", `${params.name}`).then(
+      async (e) => {
+        setSnap(e);
+        setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
+        e.filePaths.forEach((element) => {
+          setSlideImages((slideImages) => [...slideImages, element]);
+          setSwipe(true);
+        });
+        // const commentSnapshot = await getDocs(
+        //   collection(db, `post/${e.documentId}/comment`)
+        // );
+        // commentSnapshot.forEach((doc) => {
+        //   // doc.data() is never undefined for query doc snapshots
+        //   // console.log(doc.id, " => ", doc.data());
+        //   setCommentSnapshot((commentSnap) => [...commentSnap, doc.data()]);
+        // });
+      }
+    );
 
     // // checki kaldır simdilik dursun hep req atmasin diye duruyor
     // const check = localStorage.getItem("recipe");
@@ -56,10 +71,17 @@ export const Recipe = () => {
 
   useEffect(() => {
     fetchDetails();
-  }, [params.name, setSnap, setSlideImages]);
+  }, [params.name, setSnap, setSlideImages, setCommentSnapshot]);
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
       {Object.keys(snap).length > 0 && (
         <DetailWrapper
           animate={{ opacity: 1 }}
@@ -71,6 +93,7 @@ export const Recipe = () => {
             className="slide-container"
             style={{ width: "556px", height: "370px" }}
           >
+            <h2>{snap.title}</h2>
             <Slide arrows={swipe} canSwipe={swipe} autoplay={swipe}>
               {slideImages.map((slideImage, index) => (
                 <div className="each-slide-effect" key={index}>
@@ -131,7 +154,8 @@ export const Recipe = () => {
           </Info>
         </DetailWrapper>
       )}
-    </>
+      {Object.keys(snap).length > 0 && <CommentSection postSnap={snap} />}
+    </div>
   );
 };
 
