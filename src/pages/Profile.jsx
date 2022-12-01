@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth, db, getCollectionByField } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { ProfileBanner } from "../components/Profile/ProfileBanner";
 import { ProfileLeftColumn } from "../components/Profile/ProfileLeftColumn";
@@ -14,6 +14,7 @@ export const Profile = () => {
   const [snap, setSnap] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [stat, setStat] = useState(false);
+  const [favoritesSnap, setFavoritesSnap] = useState([]);
 
   // const [followButtonText, setFollowButtonText] = useState("Follow");
 
@@ -28,7 +29,7 @@ export const Profile = () => {
       params.name = snapshot.username;
 
       // asagidaki mantigi neden yaptım gram fikrim yok amk
-      
+
       // if (snapshot.username === params.name) {
       //   setSnap(snapshot);
       //   setIsLoading(false);
@@ -102,7 +103,8 @@ export const Profile = () => {
 
             // followButtonText={followButtonText}
           />
-          <ProfileLeftColumn snap={snap} />
+          {Object.keys(snap).length > 0 && <ProfileLeftColumn snap={snap} />}
+
           <ProfileRightColumn
             snap={snap}
             getData={getData}

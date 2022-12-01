@@ -81,10 +81,10 @@ export const Veggie = () => {
             <p style={{ marginLeft: "80px" }}>LOADING</p>
           )}
           {Object.keys(snap).length > 0 &&
-            snap.map((value) => {
+            snap.map((value, index) => {
               return (
-                <SplideSlide key={value.id}>
-                  <Link to={`/recipe/${value.id}`}>
+                <SplideSlide key={index}>
+                  <Link to={`/recipe/${value.documentId}`}>
                     <Card>
                       <p>{value.title}</p>
                       <img src={value.coverImagePath} alt={value.title} />

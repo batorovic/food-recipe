@@ -23,11 +23,11 @@ import {
 
 export const CommentSection = (props) => {
   // const { snap, commentSnap, postSnap } = props;
-  const { postSnap } = props;
+  const { postSnap, currentUserSnap } = props;
 
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
 
-  const [currentUserSnap, setCurrentUserSnap] = useState({});
+  // const [currentUserSnap, setCurrentUserSnap] = useState({});
   const [post, setPost] = useState({});
   const [commentSnap, setCommentSnapshot] = useState([]);
   const [textAreaValue, setTextAreaValue] = useState({
@@ -39,18 +39,14 @@ export const CommentSection = (props) => {
   const getData = async () => {
     console.log("comment section use effect");
 
-    if (user) {
-      const snapshot = await getCollectionSnapshot("User", `${user?.uid}`);
-      setCurrentUserSnap(snapshot);
-    }
-    // const postSnap12 = await getCollectionByField(
-    //   "post",
-    //   "id",
-    //   `${params.name}`
-    // );
-    // setPost(postSnap12);
+    // if (user) {
+    //   const snapshot = await getCollectionSnapshot("User", `${user?.uid}`);
+    //   setCurrentUserSnap(snapshot);
+    // }
+
     try {
       const docRef = collection(db, `post/${postSnap.documentId}/comment`);
+      console.log(postSnap.documentId);
       setCommentRef(docRef);
       const commentSnapshot = await getDocs(
         query(docRef, orderBy("time", "desc"))
@@ -80,7 +76,8 @@ export const CommentSection = (props) => {
 
   useEffect(() => {
     getData();
-  }, [user]);
+    // }, [user]);
+  }, []);
 
   const textAreaOnChange = (e) => {
     setTextAreaValue({ ...textAreaValue, comment: e.target.value });
@@ -89,13 +86,16 @@ export const CommentSection = (props) => {
     e.preventDefault();
     //apiden gelen ieyleri vtye eklenen idyi tabloya yaz!
     const docRef = await addDoc(commentRef, {
-      uid: `${user?.uid}`,
+      // uid: `${user?.uid}`,
+      uid: `${currentUserSnap?.uid}`,
+
       comment: textAreaValue.comment,
       time: serverTimestamp(),
       username: currentUserSnap.username,
       photoUrl: `${currentUserSnap.photoUrl}`,
     }).then(async (e) => {
-      const ref = collection(db, `post/${postSnap.documentId}/comment`);
+      // new comment show it.
+      // const ref = collection(db, `post/${postSnap.documentId}/comment`);
       const commentSnapshot = await getDocs(
         query(commentRef, orderBy("time", "desc"))
       );
@@ -121,8 +121,11 @@ export const CommentSection = (props) => {
 
   return (
     <Wrapper>
-      {!user ? (
-        <div>NO USER NO COMMENT MAKE A CSS HERE</div>
+      {/* {!user ? ( */}
+      {!currentUserSnap ? (
+        <div style={{ marginBottom: "22px" }}>
+          Please sign in for make a comment.
+        </div>
       ) : (
         <form className="comment-add" onSubmit={formSubmit}>
           <div className="top">
@@ -161,7 +164,7 @@ export const CommentSection = (props) => {
                   </div>
                   <div className="info">
                     <span>{value.username}</span>
-                    <span>{date}</span>
+                    <span style={{ color: "grey" }}>{date}</span>
                   </div>
                 </div>
                 <div className="commentBottom">
@@ -240,7 +243,6 @@ const Wrapper = styled.div`
       background-color: #f0f0f0ea;
     }
     border-bottom: 1px solid grey;
-    margin-bottom: 20px;
   }
   .commentTop {
     display: flex;

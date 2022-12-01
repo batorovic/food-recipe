@@ -6,22 +6,39 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import {
   auth,
+  db,
   getCollectionByField,
   getCollectionByFieldInArray,
 } from "../../utils/firebase";
 import { motion } from "framer-motion";
+import { collection, getDocs, query } from "firebase/firestore";
 
 export const ProfileLeftColumn = (props) => {
+  const { snap } = props;
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
   const [toggleState, setToggleState] = useState(1); //1 Tariflerim 2 Tarif Defterim
   const [postSnap, setPostSnap] = useState({});
+  const [favoritesSnap, setFavoritesSnap] = useState([]);
+
   let params = useParams();
 
   useEffect(() => {
     console.log("get post use effect");
 
     async function tester1() {
+      const q = query(collection(db, "post"));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        for (const snapKey in snap.favorites) {
+          if (doc.id === snap.favorites[snapKey]) {
+            setFavoritesSnap((favoritesSnap) => [...favoritesSnap, doc.data()]);
+          }
+        }
+      });
       await getCollectionByFieldInArray("post", "uid", `${params.name}`).then(
         (e) => {
           setPostSnap(e);
@@ -69,10 +86,10 @@ export const ProfileLeftColumn = (props) => {
           {/* <p>Recipe Content</p> */}
           <Grid>
             {Object.keys(postSnap).length > 0 &&
-              postSnap.map((item) => {
+              postSnap.map((item, index) => {
                 return (
-                  <CuisineCard key={item.id}>
-                    <Link to={`/recipe/${item.id}`}>
+                  <CuisineCard key={index}>
+                    <Link to={`/recipe/${item.documentId}`}>
                       <img
                         src={item.coverImagePath}
                         alt=""
@@ -92,7 +109,25 @@ export const ProfileLeftColumn = (props) => {
         >
           <h2>My Recipe Book</h2>
           <hr />
-          <p>My Recipe Book Content</p>
+          {/* <p>My Recipe Book Content</p> */}
+          <Grid>
+            {favoritesSnap.length > 0 &&
+              favoritesSnap.map((item, index) => {
+                return (
+                  <CuisineCard key={index}>
+                    <Link to={`/recipe/${item.documentId}`}>
+                      <img
+                        src={item.coverImagePath}
+                        alt=""
+                        width={220}
+                        height={220}
+                      />
+                      <h4>{item.title}</h4>
+                    </Link>
+                  </CuisineCard>
+                );
+              })}
+          </Grid>
         </div>
       </div>
     </BottomLeftSide>
