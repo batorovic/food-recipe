@@ -34,6 +34,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { uploadFiles } from "../utils/uploadFile";
+import { BsPeople } from "react-icons/bs";
+import { IoPeopleOutline } from "react-icons/io";
 
 export const AddRecipe = (props) => {
   const navigate = useNavigate();
@@ -118,12 +120,18 @@ export const AddRecipe = (props) => {
     },
     {
       id: 2,
+      name: "My Feed",
+      to: `/my-feed`,
+      icon: <BsPeople size={20} />,
+    },
+    {
+      id: 3,
       name: "Settings",
       to: `/settings`,
       icon: <FiSettings size={20} />,
     },
     {
-      id: 3,
+      id: 4,
       name: "Sign Out",
       onClick: signOut,
       icon: <MdExitToApp size={20} />,

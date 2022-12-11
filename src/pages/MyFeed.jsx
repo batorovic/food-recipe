@@ -117,16 +117,12 @@ export const MyFeed = () => {
                       to={`/recipe/${value.documentId}`}
                       style={{ color: "orange" }}
                     >
-                      Recipe link
+                      {value.title}
                     </Link>
                   </div>
 
                   <div className="post-image">
-                    <Link
-                      onClick={() => {
-                        window.location.href = `/profile/${value.addedBy}`;
-                      }}
-                    >
+                    <Link to={`/recipe/${value.documentId}`}>
                       <img src={value.coverImagePath} alt="post_image" />
                     </Link>
                   </div>

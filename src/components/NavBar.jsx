@@ -15,6 +15,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { NavbarDropdown } from "./DropdownMenu/NavbarDropdown";
 import "../styles/deneme.css";
 import { ForgotPassword } from "./ForgotPassword";
+import { BsPeople } from "react-icons/bs";
 export const NavBar = () => {
   const [signinPopup, setSigninPopup] = useState(false);
   const [signupPopup, setSignupPopup] = useState(false);
@@ -70,12 +71,18 @@ export const NavBar = () => {
     },
     {
       id: 2,
+      name: "My Feed",
+      to: `/my-feed`,
+      icon: <BsPeople size={20} />,
+    },
+    {
+      id: 3,
       name: "Settings",
       to: `/settings`,
       icon: <FiSettings size={20} />,
     },
     {
-      id: 3,
+      id: 4,
       name: "Sign Out",
       onClick: logOut,
       icon: <MdExitToApp size={20} />,
@@ -145,7 +152,7 @@ const UlWrapper = styled.div`
   z-index: 111;
   background-color: white;
   width: 180px;
-  margin-top: 15.2rem;
+  margin-top: 19.2rem;
   margin-left: 27px;
   position: absolute;
   border-radius: 10px;

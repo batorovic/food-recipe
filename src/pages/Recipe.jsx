@@ -277,7 +277,7 @@ export const Recipe = () => {
                     padding: "2rem",
                   }}
                 ></div> */}
-                <span style={{ color: "grey", marginTop: "22px" }}>
+                <span style={{ color: "grey", marginTop: "30px" }}>
                   Shared By
                 </span>
                 <div className="author">
