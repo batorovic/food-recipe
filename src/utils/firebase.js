@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  orderBy,
   query,
   setDoc,
   where,
@@ -83,11 +84,22 @@ export const setCollection = async (name, data) => {
 export const getCollectionByFieldInArray = async (
   collectionName,
   field,
-  searchedField
+  searchedField,
+  isOrder
 ) => {
+  //orderby baska seyleri bozabilir silebilirim.
   let data = [];
   const userRef = collection(db, `${collectionName}`);
-  const q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  let q;
+  if (isOrder === true) {
+    q = query(
+      userRef,
+      where(`${field}`, "==", `${searchedField}`),
+      orderBy("timestamp", "desc")
+    );
+  } else {
+    q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  }
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     data.push(doc.data());

@@ -42,7 +42,8 @@ export const ProfileLeftColumn = (props) => {
       await getCollectionByFieldInArray(
         "post",
         "addedBy",
-        `${params.name}`
+        `${params.name}`,
+        true
       ).then((e) => {
         setPostSnap(e);
       });
