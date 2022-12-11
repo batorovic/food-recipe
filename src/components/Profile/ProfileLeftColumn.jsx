@@ -11,7 +11,7 @@ import {
   getCollectionByFieldInArray,
 } from "../../utils/firebase";
 import { motion } from "framer-motion";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 
 export const ProfileLeftColumn = (props) => {
   const { snap } = props;
@@ -39,11 +39,13 @@ export const ProfileLeftColumn = (props) => {
           }
         }
       });
-      await getCollectionByFieldInArray("post", "uid", `${params.name}`).then(
-        (e) => {
-          setPostSnap(e);
-        }
-      );
+      await getCollectionByFieldInArray(
+        "post",
+        "addedBy",
+        `${params.name}`
+      ).then((e) => {
+        setPostSnap(e);
+      });
     }
     tester1();
   }, [user, setPostSnap]);
@@ -57,6 +59,7 @@ export const ProfileLeftColumn = (props) => {
   };
   return (
     <BottomLeftSide>
+      {console.log(user.photoURL)}
       <div className="about">
         <span>{props.snap.about}</span>
         {props.user && (
@@ -238,7 +241,7 @@ const BottomLeftSide = styled.div`
 `;
 
 const Grid = styled.div`
-  margin-top: 55px;
+  margin-top: 35px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   grid-gap: 2rem;
@@ -250,6 +253,9 @@ const CuisineCard = styled.div`
     /* width: 100%; */
     border-radius: 2rem;
     transition: all 0.2s ease-in-out;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 10px;
+    object-fit: cover;
+
     &:hover {
       transform: scale(1.1);
     }

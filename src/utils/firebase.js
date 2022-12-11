@@ -28,7 +28,6 @@ export const auth = getAuth();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-
 export const updateField = async (collection, uid, updatedField) => {
   let status = false;
   const document = doc(db, `${collection}`, `${uid}`);

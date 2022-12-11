@@ -25,6 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GiKnifeFork } from "react-icons/gi";
 import { motion } from "framer-motion";
 import {
+  arrayUnion,
   doc,
   getDoc,
   increment,
@@ -142,6 +143,7 @@ export const AddRecipe = (props) => {
       coverImagePath: "",
       filePaths: [],
       documentId: "",
+      addedBy: snapshot.username,
       timestamp: serverTimestamp(),
     });
 
@@ -152,10 +154,13 @@ export const AddRecipe = (props) => {
       `post/${documentId}`,
       file[coverImageIndex].name,
       documentId
-    ).then(() => console.log("1asd"));
-
-    updateField("post", documentId, { documentId: documentId });
-    updateField("User", user?.uid, { numberOfPosts: increment(1) });
+    ).then(() => {
+      updateField("post", documentId, { documentId: documentId });
+      updateField("User", user?.uid, {
+        numberOfPosts: increment(1),
+        post: arrayUnion(documentId),
+      });
+    });
   };
 
   async function onCLickButton(e) {

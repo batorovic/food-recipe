@@ -61,6 +61,6 @@ export const uploadFiles = async (
   });
 
   Promise.all(promises)
-    .then(() => alert("All images uploaded"))
+    .then(() => alert("Post succesfully added."))
     .then((err) => console.log(err));
 };

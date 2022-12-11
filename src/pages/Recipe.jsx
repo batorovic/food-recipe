@@ -24,8 +24,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-
 import "../styles/card.css";
+
+import Rating from "@mui/material/Rating";
+import StarIcon from "@mui/icons-material/Star";
+import { Box } from "@mui/material";
 
 export const Recipe = () => {
   const [details, setDetails] = useState({});
@@ -37,6 +40,25 @@ export const Recipe = () => {
   const [currentUserSnap, setCurrentUserSnap] = useState({});
   const [user, loading, error] = useAuthState(auth);
   const [bookmark, setBookmark] = useState(false);
+  const [readOnly, setReadOnly] = useState(false);
+  const labels = {
+    0.5: "0.5",
+    1: "1",
+    1.5: "1.5",
+    2: "2",
+    2.5: "2.5",
+    3: "3",
+    3.5: "3.5",
+    4: "4",
+    4.5: "4.5",
+    5: "5",
+  };
+  const [value, setValue] = useState(0);
+  const [hover, setHover] = useState(-1);
+
+  function getLabelText(value) {
+    return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
+  }
 
   let params = useParams();
   let images = [];
@@ -52,6 +74,8 @@ export const Recipe = () => {
           setBookmark(true);
         }
       });
+    } else {
+      setReadOnly(true);
     }
     //apiden cekmek
     // const data = await fetch(
@@ -62,12 +86,25 @@ export const Recipe = () => {
 
     await getCollectionByField("post", "documentId", `${params.name}`).then(
       async (e) => {
+        let sum = 0;
         setSnap(e);
         setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
         e.filePaths.forEach((element) => {
           setSlideImages((slideImages) => [...slideImages, element]);
           setSwipe(true);
         });
+        try {
+          e.rating.forEach((value) => {
+            sum += value.number;
+            if (user?.uid === value.ratedBy) setReadOnly(true);
+          });
+          Number.isInteger(sum / e.rating.length)
+            ? setValue(sum / e.rating.length)
+            : setValue(Math.floor(sum / e.rating.length) + 0.5);
+        } catch (error) {
+          console.log("not rated yet");
+        }
+
         // const commentSnapshot = await getDocs(
         //   collection(db, `post/${e.documentId}/comment`)
         // );
@@ -131,14 +168,91 @@ export const Recipe = () => {
               className="slide-container"
               style={{ width: "556px", height: "370px" }}
             >
-              <h2>{snap.title}</h2>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  marginBottom: "2rem",
+                }}
+              >
+                <h2>{snap.title}</h2>
+
+                <Box
+                  sx={{
+                    width: 200,
+                    display: "flex",
+                    alignItems: "center",
+                    marginLeft: "60px",
+                  }}
+                >
+                  <Rating
+                    size="large"
+                    name="hover-feedback"
+                    value={value}
+                    precision={0.5}
+                    readOnly={readOnly}
+                    getLabelText={getLabelText}
+                    onChange={(event, newValue) => {
+                      setReadOnly(true);
+
+                      updateField("post", params.name, {
+                        rating: arrayUnion({
+                          ratedBy: user?.uid,
+                          number: newValue,
+                        }),
+                      }).then((e) => {
+                        getCollectionByField(
+                          "post",
+                          "documentId",
+                          `${params.name}`
+                        ).then(async (data) => {
+                          // setSnap(data);
+
+                          let sum = 0;
+
+                          data.rating.forEach((value) => {
+                            sum += value.number;
+                          });
+                          if (Number.isInteger(sum / data.rating.length)) {
+                            setValue(sum / data.rating.length);
+                            setHover(sum / data.rating.length);
+                          } else {
+                            setValue(
+                              Math.floor(sum / data.rating.length) + 0.5
+                            );
+                            setHover(
+                              Math.floor(sum / data.rating.length) + 0.5
+                            );
+                          }
+                        });
+                      });
+                    }}
+                    onChangeActive={(event, newHover) => {
+                      setHover(newHover);
+                    }}
+                    emptyIcon={
+                      <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+                    }
+                  />
+                  {value !== null && (
+                    <Box sx={{ ml: 2 }} fontSize="22px">
+                      {labels[hover !== -1 ? hover : value]}
+                    </Box>
+                  )}
+                </Box>
+              </div>
               <Slide arrows={swipe} canSwipe={swipe} autoplay={swipe}>
                 {slideImages.map((slideImage, index) => (
-                  <div className="each-slide-effect" key={index}>
+                  <div
+                    className="each-slide-effect"
+                    key={index}
+                    style={{ backgroundColor: "#f5f5f5" }}
+                  >
                     <div
                       key={index}
                       style={{
-                        backgroundImage: `url(${slideImage})`,
+                        background: `url(${slideImage}) no-repeat center`,
                       }}
                     ></div>
                   </div>
@@ -195,20 +309,23 @@ export const Recipe = () => {
                   Ingredients
                 </Button>
               </div>
-
-              <div className="bookmark" onClick={onClickBookmark}>
-                {!bookmark ? (
-                  <>
-                    <BsJournalBookmark size={30} />
-                    <span>Bookmark</span>
-                  </>
-                ) : (
-                  <>
-                    <BsJournalBookmarkFill size={30} />
-                    <span>Unbookmark</span>
-                  </>
-                )}
-              </div>
+              {user ? (
+                <div className="bookmark" onClick={onClickBookmark}>
+                  {!bookmark ? (
+                    <>
+                      <BsJournalBookmark size={30} />
+                      <span>Bookmark</span>
+                    </>
+                  ) : (
+                    <>
+                      <BsJournalBookmarkFill size={30} />
+                      <span>Unbookmark</span>
+                    </>
+                  )}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
 
             {activeTab === "instructions" && (
@@ -216,7 +333,7 @@ export const Recipe = () => {
                 <div
                   style={{
                     display: "flex",
-                    alignItems: "flex-start",
+                    alignItems: "center",
                     justifyContent: "flex-start",
                     gap: "2rem",
                   }}
@@ -255,10 +372,12 @@ export const Recipe = () => {
           </Info>
         </DetailWrapper>
       )}
-      {Object.keys(snap).length > 0 &&
-        Object.keys(currentUserSnap).length > 0 && (
-          <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
-        )}
+      {Object.keys(snap).length > 0 && (
+        <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
+      )}
+      {/* // Object.keys(currentUserSnap).length > 0 && ( //{" "}
+      <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
+      // )} */}
     </div>
   );
 };
@@ -273,7 +392,7 @@ const DetailWrapper = styled(motion.div)`
   }
 
   h2 {
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
   }
   li {
     font-size: 1.2rem;

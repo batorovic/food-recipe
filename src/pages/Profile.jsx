@@ -26,8 +26,8 @@ export const Profile = () => {
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
       setSnap(snapshot);
       setIsLoading(false);
+      console.log(snapshot);
       params.name = snapshot.username;
-
       // asagidaki mantigi neden yaptım gram fikrim yok amk
 
       // if (snapshot.username === params.name) {

@@ -122,7 +122,9 @@ export const CommentSection = (props) => {
   return (
     <Wrapper>
       {/* {!user ? ( */}
-      {!currentUserSnap ? (
+      {/* {!currentUserSnap ? ( */}
+      {Object.keys(currentUserSnap).length ===0 ? (
+
         <div style={{ marginBottom: "22px" }}>
           Please sign in for make a comment.
         </div>
@@ -130,7 +132,7 @@ export const CommentSection = (props) => {
         <form className="comment-add" onSubmit={formSubmit}>
           <div className="top">
             <h4>Comments</h4>
-            <span>0</span>
+            <span>{commentSnap.length}</span>
           </div>
           <div className="bottom">
             <div className="comment-input">
@@ -183,6 +185,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 5rem;
   .comment-add {
     width: 900px;
   }
@@ -196,9 +199,17 @@ const Wrapper = styled.div`
   .bottom {
     position: relative;
     button {
+      color: white;
       padding: 1rem;
       position: absolute;
       right: 100px;
+      background: linear-gradient(to right, #f27121, #e94057);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      &:hover {
+        filter: brightness(90%);
+      }
     }
   }
   .comment-input {

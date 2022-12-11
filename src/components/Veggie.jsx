@@ -9,6 +9,7 @@ import {
   getCollectionSnapshot,
   setCollection,
   storage,
+  updateField,
 } from "../utils/firebase";
 import { serverTimestamp } from "firebase/firestore";
 import { async } from "@firebase/util";
@@ -45,12 +46,21 @@ export const Veggie = () => {
     //     documentId: "",
     //     id: `${value.id}`,
     //     timestamp: serverTimestamp(),
+    //     category: "veggie",
+    //   }).then((e) => {
+    //     updateField("post", e, { documentId: e });
     //   });
     // });
 
-    await getCollectionByFieldInArray("post", "uid", "admin").then((e) => {
-      setSnap(e);
-    });
+    // await getCollectionByFieldInArray("post", "uid", "admin").then((e) => {
+    //   setSnap(e);
+    // });
+
+    await getCollectionByFieldInArray("post", "category", "veggie").then(
+      (e) => {
+        setSnap(e);
+      }
+    );
 
     // if (check) {
     //   setVeggie(JSON.parse(check));
