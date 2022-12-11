@@ -145,6 +145,7 @@ export const AddRecipe = (props) => {
       documentId: "",
       addedBy: snapshot.username,
       timestamp: serverTimestamp(),
+      userPhoto: snapshot.photoUrl,
     });
 
     // upload caliisyor

@@ -247,14 +247,22 @@ export const Recipe = () => {
                   <div
                     className="each-slide-effect"
                     key={index}
-                    style={{ backgroundColor: "#f5f5f5" }}
+                    style={{
+                      backgroundColor: "#f5f5f5",
+                      width: "560px",
+                      height: "360px",
+                    }}
                   >
-                    <div
+                    <img
                       key={index}
+                      alt="slide_img"
+                      src={slideImage}
                       style={{
-                        background: `url(${slideImage}) no-repeat center`,
+                        objectFit: "fill",
+                        height: "100%",
+                        width: "100%",
                       }}
-                    ></div>
+                    />
                   </div>
                 ))}
               </Slide>
@@ -275,17 +283,18 @@ export const Recipe = () => {
                 <div className="author">
                   <Link
                     style={{ display: "contents" }}
-                    to={`/profile/${currentUserSnap.username}`}
+                    onClick={() => {
+                      window.location.href = `/profile/${snap.addedBy}`;
+                    }}
                   >
                     <div className="recipe-owner">
                       <span style={{ fontSize: "22px" }}>
-                        {" "}
                         {currentUserSnap.name}
                       </span>
                       <span>{currentUserSnap.about}</span>
                     </div>
                     <div className="avatar">
-                      <img src={currentUserSnap.photoUrl} alt="avatar" />
+                      <img src={snap.userPhoto} alt="avatar" />
                     </div>
                   </Link>
                 </div>
@@ -361,8 +370,8 @@ export const Recipe = () => {
 
             {activeTab === "ingredients" && (
               <ul>
-                {snap.ingredient.map((ingredient) => (
-                  <li key={ingredient.id}>
+                {snap.ingredient.map((ingredient, index) => (
+                  <li key={index}>
                     {/* {apiden otomatik ekledigim icin admin normal admin eklediğinde onun adminuser diye uid acariz} */}
                     {snap.uid === "admin" ? ingredient.original : ingredient}
                   </li>

@@ -9,6 +9,7 @@ import { Category } from "../components/Category";
 import { Profile } from "../pages/Profile";
 import { Settings } from "../pages/Settings";
 import { AddRecipe } from "../pages/AddRecipe";
+import { MyFeed } from "../pages/MyFeed";
 
 export const Layout = () => {
   return (
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:name",
         element: <Profile />,
+      },
+      {
+        path: "/my-feed",
+        element: <MyFeed />,
       },
     ],
   },
