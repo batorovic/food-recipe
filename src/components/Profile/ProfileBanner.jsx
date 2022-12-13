@@ -11,6 +11,7 @@ import { AiFillCamera } from "react-icons/ai";
 import { TiEdit } from "react-icons/ti";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { Gradient } from "../../styles/Card.styled";
 import {
   auth,
   getCollectionByField,
@@ -102,6 +103,7 @@ export const ProfileBanner = (props) => {
       {/* signin popup */}
       <SigninPopup trigger={signinPopup} setTrigger={setSigninPopup} />
       <img src={props.snapshot.bannerPhotoUrl} alt="" />
+
       {user?.uid === props.snapshot.uid && (
         <div className="imgSelect">
           <label htmlFor="fileBanner">

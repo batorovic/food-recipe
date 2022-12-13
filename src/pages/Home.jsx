@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import React from "react";
 import { Category } from "../components/Category";
+import { UserRecipes } from "../components/UserRecipes";
 
 export const Home = () => {
   return (
@@ -15,6 +16,7 @@ export const Home = () => {
     >
       <Veggie />
       <Popular />
+      <UserRecipes />
     </motion.div>
   );
 };
