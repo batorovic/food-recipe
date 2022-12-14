@@ -39,7 +39,7 @@ export const UserRecipes = () => {
           }}
         >
           {snap.length === 0 ? (
-            <p style={{ marginLeft: "80px" }}>LOADING</p>
+            <p style={{ marginLeft: "80px" }}>NO RECIPES YET</p>
           ) : (
             snap.map((value, index) => {
               return (

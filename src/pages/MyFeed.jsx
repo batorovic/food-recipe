@@ -86,9 +86,10 @@ export const MyFeed = () => {
             .map((value, index) => (
               <PostCard key={index}>
                 <Link
-                  onClick={() => {
-                    window.location.href = `/profile/${value.addedBy}`;
-                  }}
+                  to={`/profile/${value.addedBy}`}
+                  // onClick={() => {
+                  //   window.location.href = `/profile/${value.addedBy}`;
+                  // }}
                   className="post-owner"
                 >
                   <div className="avatar">

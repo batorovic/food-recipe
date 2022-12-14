@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { auth, db, getCollectionByField } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { ProfileBanner } from "../components/Profile/ProfileBanner";
 import { ProfileLeftColumn } from "../components/Profile/ProfileLeftColumn";
 import { ProfileRightColumn } from "../components/Profile/ProfileRightColumn";
 import { exportUsername } from "./Settings";
 
-export const Profile = () => {
+export const Profile = (props) => {
   const [user, loading, error] = useAuthState(auth);
   const [snap, setSnap] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -19,16 +19,29 @@ export const Profile = () => {
   // const [followButtonText, setFollowButtonText] = useState("Follow");
 
   let params = useParams();
-
+  const location = useLocation();
   const getData = async () => {
+    console.log("naber link to");
     if (user) {
       console.log("profile get snap use effect");
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-      setSnap(snapshot);
-      setIsLoading(false);
-      console.log(snapshot);
-      params.name = snapshot.username;
-      // asagidaki mantigi neden yaptım gram fikrim yok amk
+      //slice and get username from url
+      if (snapshot.username !== location.pathname.slice(9)) {
+        await getCollectionByField(
+          "User",
+          "username",
+          location.pathname.slice(9)
+        ).then((e) => {
+          setSnap(e);
+          setIsLoading(false);
+        });
+      } else {
+        setSnap(snapshot);
+        setIsLoading(false);
+      }
+      params.name = snapshot.username; // ???
+
+      // asagidaki mantigi neden yaptım gram fikrim yok
 
       // if (snapshot.username === params.name) {
       //   setSnap(snapshot);

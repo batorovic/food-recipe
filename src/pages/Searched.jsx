@@ -12,6 +12,7 @@ export const Searched = () => {
       https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&query=${name}`);
     const recipes = await data.json();
     setSearchedRecipes(recipes.results);
+    console.log("123123123123123123123");
   };
 
   useEffect(() => {
