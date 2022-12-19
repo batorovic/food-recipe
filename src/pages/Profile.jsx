@@ -25,20 +25,24 @@ export const Profile = (props) => {
     if (user) {
       console.log("profile get snap use effect");
       const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
+      setSnap(snapshot);
+      setIsLoading(false);
+
       //slice and get username from url
-      if (snapshot.username !== location.pathname.slice(9)) {
-        await getCollectionByField(
-          "User",
-          "username",
-          location.pathname.slice(9)
-        ).then((e) => {
-          setSnap(e);
-          setIsLoading(false);
-        });
-      } else {
-        setSnap(snapshot);
-        setIsLoading(false);
-      }
+      // if (snapshot.username !== location.pathname.slice(9)) {
+      //   console.log("ayo");
+      //   await getCollectionByField(
+      //     "User",
+      //     "username",
+      //     location.pathname.slice(9)
+      //   ).then((e) => {
+      //     setSnap(e);
+      //     setIsLoading(false);
+      //   });
+      // } else {
+      //   setSnap(snapshot);
+      //   setIsLoading(false);
+      // }
       params.name = snapshot.username; // ???
 
       // asagidaki mantigi neden yaptım gram fikrim yok
