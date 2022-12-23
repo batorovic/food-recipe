@@ -173,7 +173,7 @@ export const Recipe = () => {
                   width: "600px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-evenly",
+                  justifyContent: "flex-start",
                   marginBottom: "2rem",
                 }}
               >

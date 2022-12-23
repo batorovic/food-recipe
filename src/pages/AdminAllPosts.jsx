@@ -186,27 +186,13 @@ EnhancedTableHead.propTypes = {
 };
 
 const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
-  setRows(
-    rows.filter(function (obj) {
-      for (const key in selectedItems) {
-        if (selectedItems[key] !== obj.docId) {
-          return obj;
-        }
-      }
-    })
-  );
+  for (const key in rows) {
+    if (selectedItems.includes(rows[key].docId)) {
+      rows.splice(key, 1);
+      setRows(rows);
+    }
+  }
   setSelected([]);
-
-  // let counter = 0;
-  // console.log(rows);
-  // for (const key in rows) {
-  //   if (selectedItems.includes(rows[key].docId)) {
-  //     rows.slice(key, 1);
-  //     console.log(rows);
-  //     console.log(counter);
-  //   }
-  //   if (selectedItems.length === counter) break;
-  // }
 };
 
 function EnhancedTableToolbar(props) {

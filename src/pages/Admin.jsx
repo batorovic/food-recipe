@@ -9,6 +9,8 @@ import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { AdminPosts } from "./AdminPosts";
 import EnhancedTable from "./AdminAllPosts";
+import { db } from "../utils/firebase";
+import { collection, doc, getDoc, query } from "firebase/firestore";
 
 export const Admin = () => {
   const [toggle, setToggle] = useState(true);
