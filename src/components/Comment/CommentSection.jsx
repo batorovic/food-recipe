@@ -123,8 +123,7 @@ export const CommentSection = (props) => {
     <Wrapper>
       {/* {!user ? ( */}
       {/* {!currentUserSnap ? ( */}
-      {Object.keys(currentUserSnap).length ===0 ? (
-
+      {Object.keys(currentUserSnap).length === 0 ? (
         <div style={{ marginBottom: "22px" }}>
           Please sign in for make a comment.
         </div>

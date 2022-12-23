@@ -10,13 +10,22 @@ import { Profile } from "../pages/Profile";
 import { Settings } from "../pages/Settings";
 import { AddRecipe } from "../pages/AddRecipe";
 import { MyFeed } from "../pages/MyFeed";
+import { Admin } from "../pages/Admin";
 
 export const Layout = () => {
   return (
-    <>
+    <div style={{ margin: "0% 10%" }}>
       <NavBar />
       <Outlet />
-    </>
+    </div>
+  );
+};
+export const LayoutAdmin = () => {
+  return (
+    <div>
+      <Admin />
+      <Outlet />
+    </div>
   );
 };
 
@@ -43,7 +52,6 @@ export const router = createBrowserRouter([
           </>
         ),
       },
-
       {
         path: "/searched/:search",
         element: <Searched />,
@@ -69,6 +77,16 @@ export const router = createBrowserRouter([
   {
     path: "/addrecipe",
     element: <AddRecipe />,
+  },
+  {
+    path: "/admin",
+    element: <LayoutAdmin />,
+    children: [
+      {
+        path: "/admin/posts",
+        // element: <AdminPosts />,
+      },
+    ],
   },
 ]);
 

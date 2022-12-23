@@ -266,6 +266,7 @@ export const AddRecipe = (props) => {
 
 const Main = styled.div`
   height: "1500px";
+  margin: 0% 10%;
 `;
 
 const Nav = styled.nav`

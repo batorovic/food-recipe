@@ -86,6 +86,7 @@ export const Profile = (props) => {
     }
   };
   useEffect(() => {
+    document.title = "Profile Page";
     getData();
   }, [params]); //burasi degisti bostu
 

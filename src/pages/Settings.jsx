@@ -159,6 +159,8 @@ export function exportUsername(e) {
 }
 
 const Wrapper = styled.div`
+  margin: 0% 10%;
+
   margin-top: 2rem;
   display: flex;
   align-items: center;

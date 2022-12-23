@@ -170,9 +170,10 @@ export const Recipe = () => {
             >
               <div
                 style={{
+                  width: "600px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "flex-start",
+                  justifyContent: "space-evenly",
                   marginBottom: "2rem",
                 }}
               >
