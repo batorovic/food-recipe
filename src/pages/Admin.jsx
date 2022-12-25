@@ -9,18 +9,50 @@ import { useState } from "react";
 import { AdminDashboard } from "./AdminDashboard";
 import { AdminPosts } from "./AdminPosts";
 import EnhancedTable from "./AdminAllPosts";
-import { db } from "../utils/firebase";
-import { collection, doc, getDoc, query } from "firebase/firestore";
+import { auth, db, getAllDocsFromCollection } from "../utils/firebase";
+import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export const Admin = () => {
   const [toggle, setToggle] = useState(true);
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState("Dashboard");
   const [selectedId, setSelectedId] = useState(0);
+  const [snap, setSnap] = useState([]);
+  const [post, setPost] = useState([]);
+  const [user, loading, error] = useAuthState(auth);
 
+  const getUserData = async () => {
+    await getAllDocsFromCollection("User", setSnap);
+
+    // //user
+    // const q = query(collection(db, "User"));
+    // await getDocs(q).then((e) => {
+    //   e.forEach((doc) => {
+    //     setSnap((snap) => [...snap, doc.data()]);
+    //   });
+    // });
+  };
+
+  const getPostData = async () => {
+    await getAllDocsFromCollection("post", setPost);
+
+    //post
+    // const q = query(collection(db, "post"));
+    // await getDocs(q).then((e) =>
+    //   e.forEach((doc) => {
+    //     setPost((post) => [...post, doc.data()]);
+    //   })
+    // );
+  };
   useEffect(() => {
     console.log("admin page use effect");
     document.title = "Admin Page";
-  }, []);
+
+    if (user) {
+      getUserData();
+      getPostData();
+    }
+  }, [user]);
 
   const menuItems = [
     {
@@ -80,7 +112,6 @@ export const Admin = () => {
                       onClick={() => {
                         setSelected(value.text);
                         setSelectedId(value.id);
-                        console.log(index, value.id);
                       }}
                     >
                       <i
@@ -115,67 +146,19 @@ export const Admin = () => {
         </div>
       </nav>
 
-      <section className="home">
-        {/* <div className="text">/admin</div> */}
-        {selected === "Dashboard" ? (
-          <AdminDashboard />
-        ) : selected === "Posts" ? (
-          // <AdminPosts li="yes" />
-          <EnhancedTable />
-        ) : (
-          <AdminDashboard />
-        )}
-      </section>
+      {snap.length > 0 && post.length > 0 ? (
+        <section className="home">
+          {/* <div className="text">/admin</div> */}
+          {selected === "Dashboard" ? (
+            <AdminDashboard userSnap={snap} postSnap={post} />
+          ) : selected === "Posts" ? (
+            // <AdminPosts li="yes" />
+            <EnhancedTable postSnap={post} />
+          ) : null}
+        </section>
+      ) : null}
     </Wrap>
   );
-  // {menuItems.map((value, index) => {
-  //   return (
-  //     <li className="nav-link">
-  //       <Link key={index}>
-  //         <i className="icon">{value.icon}</i>
-  //         <span className="text nav-text">{value.text}</span>
-  //       </Link>
-  //     </li>
-  //   );
-  // })}
-  // <Wrapper style={{ margin: "0% 0%" }}>
-  //   {/* use state for roggle */}
-  //   <NavBar className="sidebar toggle">
-  //     <header>
-  //       <div className="image-text">
-  //         <span className="image">
-  //           <img src="favicon.ico" alt="logo" />
-  //         </span>
-  //         <div className="text header-text">
-  //           <span className="name">Food Recipes</span>
-  //         </div>
-  //       </div>
-  //       <MdKeyboardArrowRight className="toggle" />
-  //     </header>
-
-  //     <div className="menu-bar">
-  //       <div className="menu">
-  //         <ul className="menu-links">
-  //           <li className="nav-link">
-  //             {menuItems.map((value, index) => {
-  //               return (
-  //                 <Link className="links" key={index}>
-  //                   <i className="icon">{value.icon}</i>
-  //                   <span className="text nav-text">{value.text}</span>
-  //                 </Link>
-  //               );
-  //             })}
-  //             {/* <Link className="links">
-  //               <BiHome className="icon" />
-  //               <span className="text nav-text">Dashboard</span>
-  //             </Link> */}
-  //           </li>
-  //         </ul>
-  //       </div>
-  //     </div>
-  //   </NavBar>
-  // </Wrapper>
-  // );
 };
 
 const Wrap = styled.div`
@@ -183,133 +166,3 @@ const Wrap = styled.div`
   background-color: var(--body-color);
   transition: var(--tran-05);
 `;
-
-// const Wrapper = styled.div`
-//   background: var(--admin-body-color);
-//   height: 100vh;
-// `;
-
-// const NavBar = styled.nav`
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   height: 100%;
-//   width: 250px;
-//   padding: 10px 14px;
-//   background: var(--admin-sidebar-color);
-//   transition: var(--tran-05);
-//   z-index: 100;
-
-//   header {
-//     position: relative;
-//   }
-//   .sidebar header .image,
-//   .sidebar .icon {
-//     min-width: 60px;
-//     border-radius: 6px;
-//   }
-//   .sidebar .icon {
-//     min-width: 60px;
-//     border-radius: 6px;
-//     height: 100%;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     font-size: 20px;
-//   }
-//   li {
-//     height: 50px;
-//     list-style: none;
-//     display: flex;
-//     align-items: center;
-//     margin-top: 10px;
-//   }
-
-//   .image-text {
-//     display: flex;
-//     align-items: center;
-//     img {
-//       width: 40px;
-//       border-radius: 6px;
-//     }
-//   }
-//   .text {
-//     font-size: 18px;
-//     font-weight: 500;
-//   }
-//   .image {
-//     min-width: 60px;
-//     display: flex;
-//     align-items: center;
-//   }
-//   .header-text {
-//     display: flex;
-//     flex-direction: column;
-//   }
-//   .name {
-//     font-weight: 600;
-//   }
-//   .toggle {
-//     position: absolute;
-//     top: 50px;
-//     right: -25px;
-//     transform: translateY(-50%);
-//     height: 25px;
-//     width: 25px;
-//     background-color: var(--admin-primary-color);
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     border-radius: 50%;
-//     color: var(--admin-sidebar-color);
-//     font-size: 24px;
-//   }
-//   .menu {
-//     margin-top: 40px;
-//   }
-//   .menu-bar {
-//     height: calc(100% - 55px);
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     overflow-y: scroll;
-//   }
-//   .menu-bar::-webkit-scrollbar {
-//     display: none;
-//   }
-
-//   .menu-links {
-//     display: flex;
-//   }
-//   li .icon {
-//     min-width: 60px;
-//     font-size: 22px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//   }
-//   li .icon,
-//   .text {
-//     color: var(--admin-text-color);
-//     transition: var(--admin-tran-02);
-//   }
-//   li .links {
-//     list-style: none;
-//     background-color: transparent;
-
-//     text-decoration: none;
-//     height: 100%;
-//     width: 100%;
-//     display: flex;
-//     align-items: center;
-//     border-radius: 6px;
-//     transition: var(--admin-tran-04);
-//     &:hover {
-//       background: var(--admin-primary-color);
-//     }
-//   }
-//   .links:hover .icon,
-//   .links:hover .text {
-//     color: var(--admin-sidebar-color);
-//   }
-// `;

@@ -106,3 +106,12 @@ export const getCollectionByFieldInArray = async (
   });
   return data;
 };
+
+export const getAllDocsFromCollection = async (collectionName, setter) => {
+  const q = query(collection(db, collectionName));
+  await getDocs(q).then((e) => {
+    e.forEach((doc) => {
+      setter((snap) => [...snap, doc.data()]);
+    });
+  });
+};

@@ -146,7 +146,7 @@ function EnhancedTableHead(props) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              "aria-label": "select all desserts",
+              "aria-label": "select all documents",
             }}
           />
         </TableCell>
@@ -256,43 +256,67 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
+  const { postSnap } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("time");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  // const [dense, setDense] = React.useState(false);
+  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [user, loading, error] = useAuthState(auth);
   const [rows, setRows] = React.useState([]);
 
   const getAllPosts = async () => {
-    const q = query(collection(db, "post"));
-    await getDocs(q).then((e) =>
-      e.forEach(async (doc) => {
-        const docRef = collection(db, `post/${doc.id}/comment`);
-        const commentSnapshot = await getDocs(query(docRef));
-        if (doc.data().title.length !== 0) {
-          // setRows((rows) => [...rows, doc.data().title]);
-          setRows((rows) => [
-            ...rows,
-            {
-              docId: doc.id,
-              title: doc.data().title,
-              time:
-                doc.data().timestamp.toDate().toDateString() +
-                " " +
-                doc.data().timestamp.toDate().toLocaleTimeString("tr-TR"),
-              addedBy: doc.data().addedBy ? doc.data().addedBy : doc.data().uid,
-              category: doc.data().category
-                ? doc.data().category
-                : "user recipe",
-              comment: commentSnapshot.size ? commentSnapshot.size : 0,
-            },
-          ]);
-        }
-      })
-    );
+    postSnap.forEach((doc) => {
+      let strDate;
+      try {
+        strDate =
+          doc.timestamp.toDate().toDateString() +
+          " " +
+          doc.timestamp.toDate().toLocaleTimeString("tr-TR");
+      } catch (error) {
+        //empty data
+      }
+
+      setRows((rows) => [
+        ...rows,
+        {
+          docId: doc.documentId,
+          title: doc.title,
+          time: strDate,
+          addedBy: doc.addedBy ? doc.addedBy : doc.uid,
+          category: doc.category ? doc.category : "user recipe",
+          comment: doc.commentCount ? doc.commentCount : 0,
+        },
+      ]);
+    });
+    // const q = query(collection(db, "post"));
+    // await getDocs(q).then((e) =>
+    //   e.forEach(async (doc) => {
+    //     // const docRef = collection(db, `post/${doc.id}/comment`);
+    //     // const commentSnapshot = await getDocs(query(docRef));
+    //     if (doc.data().title.length !== 0) {
+    //       // setRows((rows) => [...rows, doc.data().title]);
+    //       setRows((rows) => [
+    //         ...rows,
+    //         {
+    //           docId: doc.id,
+    //           title: doc.data().title,
+    //           time:
+    //             doc.data().timestamp.toDate().toDateString() +
+    //             " " +
+    //             doc.data().timestamp.toDate().toLocaleTimeString("tr-TR"),
+    //           addedBy: doc.data().addedBy ? doc.data().addedBy : doc.data().uid,
+    //           category: doc.data().category
+    //             ? doc.data().category
+    //             : "user recipe",
+    //           comment: doc.data().commentCount ? doc.data().commentCount : 0,
+    //         },
+    //       ]);
+    //     }
+    //   })
+    // );
   };
   useEffect(() => {
     console.log("admin all posts use effect");
@@ -308,7 +332,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.documentId);
+      const newSelected = rows.map((n) => n.docId);
       setSelected(newSelected);
       return;
     }
@@ -344,11 +368,11 @@ export default function EnhancedTable() {
     setPage(0);
   };
 
-  // const handleChangeDense = (event) => {
-  //   setDense(event.target.checked);
-  // };
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
+  };
 
-  const isSelected = (title) => selected.indexOf(title) !== -1;
+  const isSelected = (docId) => selected.indexOf(docId) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -375,7 +399,7 @@ export default function EnhancedTable() {
             <Table
               sx={{ minWidth: 750 }}
               aria-labelledby="tableTitle"
-              // size={dense ? "small" : "medium"}
+              size={dense ? "small" : "medium"}
             >
               <EnhancedTableHead
                 numSelected={selected.length}
@@ -433,7 +457,7 @@ export default function EnhancedTable() {
                 {emptyRows > 0 && (
                   <TableRow
                     style={{
-                      // height: (dense ? 33 : 53) * emptyRows,
+                      height: (dense ? 33 : 53) * emptyRows,
                       height: 53 * emptyRows,
                     }}
                   >
@@ -453,10 +477,10 @@ export default function EnhancedTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-        {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
+        <FormControlLabel
+          control={<Switch checked={dense} onChange={handleChangeDense} />}
+          label="Dense padding"
+        />
       </Box>
     </motion.div>
   );

@@ -4,7 +4,8 @@ import { AdminCard } from "../components/Admin/AdminCard";
 import { AdminPosts } from "./AdminPosts";
 import { motion } from "framer-motion";
 
-export const AdminDashboard = () => {
+export const AdminDashboard = (props) => {
+  const { userSnap, postSnap } = props;
   // padding: "12px 60px",
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export const AdminDashboard = () => {
       <Wrapper>
         <div className="text">Dashboard</div>
         <div className="content">
-          <AdminCard />
+          <AdminCard userSnap={userSnap} postSnap={postSnap} />
           <AdminPosts />
         </div>
       </Wrapper>

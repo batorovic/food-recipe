@@ -1,31 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { TbSum } from "react-icons/tb";
 import { BiCommentDetail } from "react-icons/bi";
 import { FiUser } from "react-icons/fi";
 import { GiKnifeFork } from "react-icons/gi";
 
-export const AdminCard = () => {
+export const AdminCard = (props) => {
+  const [totalPost, setTotalPost] = useState(0);
+  const [totalComments, setTotalComment] = useState(0);
+
+  const { userSnap, postSnap } = props;
+  useEffect(() => {
+    console.log("admin card use effect");
+    getTotalPost(userSnap);
+    getTotalComments(postSnap);
+  }, []);
+
+  const getTotalPost = (userSnap) =>
+    userSnap.map((value) =>
+      setTotalPost((totalPost) => totalPost + value.post.length)
+    );
+
+  const getTotalComments = (postSnap) =>
+    postSnap.map((value) =>
+      setTotalComment((totalComments) =>
+        value.commentCount ? totalComments + value.commentCount : totalComments
+      )
+    );
   const card = [
     {
       id: 1,
       icon: <GiKnifeFork className="icon" />,
       text: "Total Recipes",
+      val: postSnap.length,
     },
     {
       id: 2,
       icon: <BiCommentDetail className="icon" />,
       text: "Total Comments",
+      val: totalComments,
     },
     {
       id: 3,
       icon: <FiUser className="icon" />,
       text: "Total Users",
+      val: userSnap.length,
     },
     {
       id: 4,
       icon: <TbSum className="icon" />,
       text: "Total Posts",
+      val: totalPost,
     },
   ];
   return (
@@ -38,7 +63,7 @@ export const AdminCard = () => {
                 <div className="cardIcon">{value.icon}</div>
                 <span className="header">{value.text}</span>
               </div>
-              <span className="fb-val">vt 352</span>
+              <span className="fb-val">{value.val}</span>
             </div>
           );
         })}

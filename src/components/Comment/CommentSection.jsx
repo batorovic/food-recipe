@@ -4,10 +4,12 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -47,6 +49,7 @@ export const CommentSection = (props) => {
     try {
       const docRef = collection(db, `post/${postSnap.documentId}/comment`);
       console.log(postSnap.documentId);
+
       setCommentRef(docRef);
       const commentSnapshot = await getDocs(
         query(docRef, orderBy("time", "desc"))
@@ -84,6 +87,10 @@ export const CommentSection = (props) => {
   };
   const formSubmit = async (e) => {
     e.preventDefault();
+    const userDbRef = doc(db, "post", `${postSnap.documentId}`);
+    await updateDoc(userDbRef, {
+      commentCount: increment(1),
+    });
     //apiden gelen ieyleri vtye eklenen idyi tabloya yaz!
     const docRef = await addDoc(commentRef, {
       // uid: `${user?.uid}`,

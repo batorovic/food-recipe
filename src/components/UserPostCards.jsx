@@ -3,6 +3,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
@@ -22,10 +24,11 @@ export const UserPostCards = (props) => {
     let counter = 0;
     if (user) {
       console.log("user exits");
-      const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
-      setSnap(snapshot);
+
       let q;
       if (props.admin !== "yes") {
+        const snapshot = (await getDoc(doc(db, "User", `${user?.uid}`))).data();
+        setSnap(snapshot);
         for (const index in snapshot.following) {
           q = query(
             collection(db, "post"),
@@ -33,7 +36,11 @@ export const UserPostCards = (props) => {
           );
         }
       } else {
-        q = query(collection(db, "post"), where("uid", "!=", "admin"));
+        q = query(
+          collection(db, "post"),
+          orderBy("timestamp", "desc"),
+          limit(1)
+        );
       }
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
