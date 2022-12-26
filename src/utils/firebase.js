@@ -3,6 +3,7 @@ import { getAuth, signOut } from "firebase/auth";
 import {
   addDoc,
   collection,
+  deleteDoc,
   getDoc,
   getDocs,
   getFirestore,
@@ -114,4 +115,8 @@ export const getAllDocsFromCollection = async (collectionName, setter) => {
       setter((snap) => [...snap, doc.data()]);
     });
   });
+};
+
+export const deleteFromCollection = async (collectionName, docId) => {
+  await deleteDoc(doc(db, collectionName, `${docId}`));
 };

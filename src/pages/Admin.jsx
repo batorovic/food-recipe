@@ -19,6 +19,7 @@ export const Admin = () => {
   const [selectedId, setSelectedId] = useState(0);
   const [snap, setSnap] = useState([]);
   const [post, setPost] = useState([]);
+  const [postRef, setPostRef] = useState();
   const [user, loading, error] = useAuthState(auth);
 
   const getUserData = async () => {

@@ -23,9 +23,10 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { auth, db } from "../utils/firebase";
+import { auth, db, deleteFromCollection } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
+import moment from "moment/moment";
 
 function createData(docId, title, time, addedBy, category, comment) {
   return {
@@ -64,7 +65,11 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function getComparator(order, orderBy) {
+function xd(a, b, orderBy) {
+  return b[orderBy] - a[orderBy];
+}
+
+function getComparator(order, orderBy, setRows) {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -188,6 +193,7 @@ EnhancedTableHead.propTypes = {
 const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
   for (const key in rows) {
     if (selectedItems.includes(rows[key].docId)) {
+      await deleteFromCollection("post", rows[key].docId);
       rows.splice(key, 1);
       setRows(rows);
     }
@@ -259,7 +265,7 @@ EnhancedTableToolbar.propTypes = {
 export default function EnhancedTable(props) {
   const { postSnap } = props;
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("time");
+  const [orderBy, setOrderBy] = React.useState("");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -270,12 +276,15 @@ export default function EnhancedTable(props) {
   const getAllPosts = async () => {
     postSnap.forEach((doc) => {
       let strDate;
+      let timeDate;
       try {
-        strDate =
+        timeDate =
           doc.timestamp.toDate().toDateString() +
           " " +
           doc.timestamp.toDate().toLocaleTimeString("tr-TR");
+        strDate = doc.timestamp.toString();
       } catch (error) {
+        console.log(doc);
         //empty data
       }
 
@@ -285,6 +294,8 @@ export default function EnhancedTable(props) {
           docId: doc.documentId,
           title: doc.title,
           time: strDate,
+          timeDate: timeDate,
+          // time: moment(doc.timestamp, "YYYY-MM-DD").toDate().getTime(),
           addedBy: doc.addedBy ? doc.addedBy : doc.uid,
           category: doc.category ? doc.category : "user recipe",
           comment: doc.commentCount ? doc.commentCount : 0,
@@ -412,7 +423,9 @@ export default function EnhancedTable(props) {
               <TableBody>
                 {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.sort(getComparator(order, orderBy)).slice() */}
-                {stableSort(rows, getComparator(order, orderBy))
+                {/* {stableSort(rows, getComparator(order, orderBy)) */}
+                {rows
+                  .sort(getComparator(order, orderBy, setRows))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
                     const isItemSelected = isSelected(row.docId);
@@ -447,7 +460,7 @@ export default function EnhancedTable(props) {
                           {row.docId}
                         </TableCell>
                         <TableCell align="right">{row.title}</TableCell>
-                        <TableCell align="right">{row.time}</TableCell>
+                        <TableCell align="right">{row.timeDate}</TableCell>
                         <TableCell align="right">{row.addedBy}</TableCell>
                         <TableCell align="right">{row.category}</TableCell>
                         <TableCell align="right">{row.comment}</TableCell>
@@ -458,7 +471,7 @@ export default function EnhancedTable(props) {
                   <TableRow
                     style={{
                       height: (dense ? 33 : 53) * emptyRows,
-                      height: 53 * emptyRows,
+                      // height: 53 * emptyRows,
                     }}
                   >
                     <TableCell colSpan={6} />
