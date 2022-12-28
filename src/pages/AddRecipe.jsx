@@ -24,6 +24,7 @@ import { signOut } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { GiKnifeFork } from "react-icons/gi";
 import { motion } from "framer-motion";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   arrayUnion,
   doc,
@@ -36,8 +37,11 @@ import {
 import { uploadFiles } from "../utils/uploadFile";
 import { BsPeople } from "react-icons/bs";
 import { IoPeopleOutline } from "react-icons/io";
+import { Alert, Button, Collapse, IconButton } from "@mui/material";
+import { Box } from "@mui/system";
 
 export const AddRecipe = (props) => {
+  const [alert, setAlert] = useState(false);
   const navigate = useNavigate();
   const [user, loading, error] = useAuthState(auth);
   const [username, setUsername] = useState("");
@@ -169,6 +173,11 @@ export const AddRecipe = (props) => {
         numberOfPosts: increment(1),
         post: arrayUnion(documentId),
       });
+      //show alert and disapper after 3sec.
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 3000);
     });
   };
 
@@ -186,6 +195,31 @@ export const AddRecipe = (props) => {
   }
   return (
     <Main>
+      {alert ? (
+        <Box sx={{ width: "100%", marginTop: "22px" }}>
+          <Collapse in={alert}>
+            <Alert
+              variant="outlined"
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setAlert(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              Post succesfully added !
+            </Alert>
+          </Collapse>
+        </Box>
+      ) : null}
       {!user && <div>NO ACCES</div>}
       {user && Object.keys(snapshot).length > 0 && (
         <motion.div

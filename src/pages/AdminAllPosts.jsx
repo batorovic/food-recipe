@@ -65,10 +65,6 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function xd(a, b, orderBy) {
-  return b[orderBy] - a[orderBy];
-}
-
 function getComparator(order, orderBy, setRows) {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -191,12 +187,18 @@ EnhancedTableHead.propTypes = {
 };
 
 const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
+  let selectedIndexs = [];
   for (const key in rows) {
     if (selectedItems.includes(rows[key].docId)) {
+      selectedIndexs.push(rows[key].docId);
       await deleteFromCollection("post", rows[key].docId);
-      rows.splice(key, 1);
-      setRows(rows);
+      // rows.splice(key, 1);
+      // setRows(rows);
     }
+  }
+
+  for (const index in selectedIndexs) {
+    rows.splice(selectedIndexs[index], 1);
   }
   setSelected([]);
 };
