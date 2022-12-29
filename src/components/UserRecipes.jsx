@@ -41,7 +41,7 @@ export const UserRecipes = () => {
           }}
         >
           {snap.length === 0 ? (
-            <HomePageSkeleton length={3} />
+            <HomePageSkeleton length={4} />
           ) : (
             snap.map((value, index) => {
               return (

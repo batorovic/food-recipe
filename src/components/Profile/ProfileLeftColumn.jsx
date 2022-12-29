@@ -60,7 +60,6 @@ export const ProfileLeftColumn = (props) => {
   };
   return (
     <BottomLeftSide>
-      {console.log(user.photoURL)}
       <div className="about">
         <span>{props.snap.about}</span>
         {props.user && (

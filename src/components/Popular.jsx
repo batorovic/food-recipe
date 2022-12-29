@@ -80,7 +80,7 @@ export const Popular = () => {
         }}
       >
         {Object.keys(snap).length === 0 ? (
-          <HomePageSkeleton length={3} />
+          <HomePageSkeleton length={4} />
         ) : null}
         {Object.keys(snap).length > 0 &&
           snap.map((value, index) => {

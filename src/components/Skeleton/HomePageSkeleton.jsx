@@ -3,7 +3,7 @@ import React from "react";
 
 export const HomePageSkeleton = (props) => {
   const { length } = props;
-  return Array.from(new Array(length)).map((index) => (
+  return Array.from(new Array(length)).map((val, index) => (
     <Skeleton
       key={index}
       variant="rectangular"

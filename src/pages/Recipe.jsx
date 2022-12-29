@@ -88,6 +88,14 @@ export const Recipe = () => {
       async (e) => {
         let sum = 0;
         setSnap(e);
+        if (!user) {
+          getCollectionByField("User", "username", `${e.addedBy}`).then(
+            (doc) => {
+              console.log(doc);
+              setCurrentUserSnap(doc);
+            }
+          );
+        }
         setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
         e.filePaths.forEach((element) => {
           setSlideImages((slideImages) => [...slideImages, element]);
@@ -382,12 +390,12 @@ export const Recipe = () => {
           </Info>
         </DetailWrapper>
       )}
-      {Object.keys(snap).length > 0 && (
+      {!user && Object.keys(currentUserSnap).length > 0 ? (
         <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
-      )}
-      {/* // Object.keys(currentUserSnap).length > 0 && ( //{" "}
-      <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
-      // )} */}
+      ) : null}
+      {user && Object.keys(snap).length > 0 ? (
+        <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
+      ) : null}
     </div>
   );
 };

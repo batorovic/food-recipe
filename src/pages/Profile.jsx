@@ -64,8 +64,9 @@ export const Profile = (props) => {
         "User",
         "username",
         params.name
-      );
-      snapshot ? setSnap(snapshot) : console.log("no user");
+      ).then((e) => {
+        setSnap(e);
+      });
       setIsLoading(false);
 
       // const userRef = collection(db, "User");
