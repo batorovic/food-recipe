@@ -75,7 +75,18 @@ export const Recipe = () => {
         }
       });
     } else {
-      setReadOnly(true);
+      await getCollectionByField("post", "documentId", `${params.name}`).then(
+        (e) => {
+          getCollectionByField(
+            "User",
+            "username",
+            e.uid === "admin" ? "et2Z97MWgdbazZjNMZXgmVJiOFU2" : `${e.uid}`
+          ).then((doc) => {
+            setCurrentUserSnap(doc);
+          });
+          setReadOnly(true);
+        }
+      );
     }
     //apiden cekmek
     // const data = await fetch(
@@ -83,19 +94,11 @@ export const Recipe = () => {
     // );
     // const detailData = await data.json();
     // setDetails(detailData);
-
     await getCollectionByField("post", "documentId", `${params.name}`).then(
       async (e) => {
         let sum = 0;
         setSnap(e);
-        if (!user) {
-          getCollectionByField("User", "username", `${e.addedBy}`).then(
-            (doc) => {
-              console.log(doc);
-              setCurrentUserSnap(doc);
-            }
-          );
-        }
+
         setSlideImages((slideImages) => [...slideImages, e.coverImagePath]);
         e.filePaths.forEach((element) => {
           setSlideImages((slideImages) => [...slideImages, element]);
@@ -390,10 +393,8 @@ export const Recipe = () => {
           </Info>
         </DetailWrapper>
       )}
-      {!user && Object.keys(currentUserSnap).length > 0 ? (
-        <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
-      ) : null}
-      {user && Object.keys(snap).length > 0 ? (
+
+      {Object.keys(currentUserSnap).length > 0 ? (
         <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
       ) : null}
     </div>
