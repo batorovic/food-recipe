@@ -393,9 +393,14 @@ export const Recipe = () => {
           </Info>
         </DetailWrapper>
       )}
-
-      {Object.keys(currentUserSnap).length > 0 ? (
-        <CommentSection postSnap={snap} currentUserSnap={currentUserSnap} />
+      {/* snap length gelebilir ? */}
+      {Object.keys(currentUserSnap).length > 0 &&
+      Object.keys(snap).length > 0 ? (
+        <CommentSection
+          postSnap={snap}
+          currentUserSnap={currentUserSnap}
+          user={user}
+        />
       ) : null}
     </div>
   );

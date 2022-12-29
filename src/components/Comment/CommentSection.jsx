@@ -25,7 +25,7 @@ import {
 
 export const CommentSection = (props) => {
   // const { snap, commentSnap, postSnap } = props;
-  const { postSnap, currentUserSnap } = props;
+  const { postSnap, currentUserSnap, user } = props;
 
   // const [user, loading, error] = useAuthState(auth);
 
@@ -130,7 +130,7 @@ export const CommentSection = (props) => {
     <Wrapper>
       {/* {!user ? ( */}
       {/* {!currentUserSnap ? ( */}
-      {Object.keys(currentUserSnap).length === 0 ? (
+      {!user ? (
         <div style={{ marginBottom: "22px" }}>
           Please sign in for make a comment.
         </div>
