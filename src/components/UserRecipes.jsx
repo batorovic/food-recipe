@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { Wrapper, Card, Gradient } from "../styles/Card.styled";
 import { db } from "../utils/firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { Skeleton } from "@mui/material";
+import { HomePageSkeleton } from "./Skeleton/HomePageSkeleton";
 
 export const UserRecipes = () => {
   const [userRecipe, setUserRecipe] = useState([]);
@@ -39,7 +41,7 @@ export const UserRecipes = () => {
           }}
         >
           {snap.length === 0 ? (
-            <p style={{ marginLeft: "80px" }}>NO RECIPES YET</p>
+            <HomePageSkeleton length={3} />
           ) : (
             snap.map((value, index) => {
               return (

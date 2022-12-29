@@ -13,6 +13,8 @@ import {
 } from "../utils/firebase";
 import { serverTimestamp } from "firebase/firestore";
 import { async } from "@firebase/util";
+import { Box, Skeleton } from "@mui/material";
+import { HomePageSkeleton } from "./Skeleton/HomePageSkeleton";
 
 export const Veggie = () => {
   const [veggie, setVeggie] = useState([]);
@@ -87,9 +89,9 @@ export const Veggie = () => {
             gap: "5rem",
           }}
         >
-          {Object.keys(snap).length === 0 && (
-            <p style={{ marginLeft: "80px" }}>LOADING</p>
-          )}
+          {Object.keys(snap).length === 0 ? (
+            <HomePageSkeleton length={3} />
+          ) : null}
           {Object.keys(snap).length > 0 &&
             snap.map((value, index) => {
               return (

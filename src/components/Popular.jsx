@@ -9,6 +9,8 @@ import {
   updateField,
 } from "../utils/firebase";
 import { serverTimestamp } from "firebase/firestore";
+import { Skeleton } from "@mui/material";
+import { HomePageSkeleton } from "./Skeleton/HomePageSkeleton";
 
 export const Popular = () => {
   const [popular, setPopular] = useState([]);
@@ -77,9 +79,9 @@ export const Popular = () => {
           gap: "5rem",
         }}
       >
-        {Object.keys(snap).length === 0 && (
-          <p style={{ marginLeft: "80px" }}>LOADING</p>
-        )}
+        {Object.keys(snap).length === 0 ? (
+          <HomePageSkeleton length={3} />
+        ) : null}
         {Object.keys(snap).length > 0 &&
           snap.map((value, index) => {
             return (
