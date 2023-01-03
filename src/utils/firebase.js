@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signOut } from "firebase/auth";
 import {
   addDoc,
+  arrayRemove,
   collection,
   deleteDoc,
   getDoc,
@@ -119,4 +120,10 @@ export const getAllDocsFromCollection = async (collectionName, setter) => {
 
 export const deleteFromCollection = async (collectionName, docId) => {
   await deleteDoc(doc(db, collectionName, `${docId}`));
+};
+
+export const deletePostFromUser = async (addedBy, docId) => {
+  if (addedBy === "admin") addedBy = "et2Z97MWgdbazZjNMZXgmVJiOFU2";
+  let doc = await getCollectionByField("User", "username", `${addedBy}`);
+  await updateField("User", doc.uid, { post: arrayRemove(docId) });
 };

@@ -23,7 +23,12 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { auth, db, deleteFromCollection } from "../utils/firebase";
+import {
+  auth,
+  db,
+  deleteFromCollection,
+  deletePostFromUser,
+} from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
 import moment from "moment/moment";
@@ -65,7 +70,7 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function getComparator(order, orderBy, setRows) {
+function getComparator(order, orderBy) {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -95,7 +100,7 @@ const headCells = [
   {
     id: "title",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Title",
   },
   {
@@ -106,19 +111,19 @@ const headCells = [
   },
   {
     id: "addedBy",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Added By",
   },
   {
     id: "category",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Category",
   },
   {
     id: "comment",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Comments",
   },
@@ -192,6 +197,7 @@ const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
     if (selectedItems.includes(rows[key].docId)) {
       selectedIndexs.push(rows[key].docId);
       await deleteFromCollection("post", rows[key].docId);
+      await deletePostFromUser(rows[key].addedBy, rows[key].docId);
       // rows.splice(key, 1);
       // setRows(rows);
     }
@@ -267,7 +273,7 @@ EnhancedTableToolbar.propTypes = {
 export default function EnhancedTable(props) {
   const { postSnap } = props;
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("");
+  const [orderBy, setOrderBy] = React.useState("docId");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -285,24 +291,23 @@ export default function EnhancedTable(props) {
           " " +
           doc.timestamp.toDate().toLocaleTimeString("tr-TR");
         strDate = doc.timestamp.toString();
+        setRows((rows) => [
+          ...rows,
+          {
+            docId: doc.documentId,
+            title: doc.title,
+            time: strDate,
+            timeDate: timeDate,
+            // time: moment(doc.timestamp, "YYYY-MM-DD").toDate().getTime(),
+            addedBy: doc.addedBy ? doc.addedBy : doc.uid,
+            category: doc.category ? doc.category : "user recipe",
+            comment: doc.commentCount ? doc.commentCount : 0,
+          },
+        ]);
       } catch (error) {
         console.log(doc);
         //empty data
       }
-
-      setRows((rows) => [
-        ...rows,
-        {
-          docId: doc.documentId,
-          title: doc.title,
-          time: strDate,
-          timeDate: timeDate,
-          // time: moment(doc.timestamp, "YYYY-MM-DD").toDate().getTime(),
-          addedBy: doc.addedBy ? doc.addedBy : doc.uid,
-          category: doc.category ? doc.category : "user recipe",
-          comment: doc.commentCount ? doc.commentCount : 0,
-        },
-      ]);
     });
     // const q = query(collection(db, "post"));
     // await getDocs(q).then((e) =>

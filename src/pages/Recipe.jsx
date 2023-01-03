@@ -67,24 +67,35 @@ export const Recipe = () => {
     //get bookmarks
     console.log("recipe fetch details use effect");
     if (user) {
-      const snapshot = await getCollectionSnapshot("User", `${user?.uid}`);
-      setCurrentUserSnap(snapshot);
-      snapshot.favorites.forEach((favorite) => {
-        if (favorite === params.name) {
-          setBookmark(true);
-        }
-      });
+      try {
+        console.log("zort");
+        const snapshot = await getCollectionSnapshot("User", `${user?.uid}`);
+        setCurrentUserSnap(snapshot);
+        snapshot.favorites.forEach((favorite) => {
+          if (favorite === params.name) {
+            setBookmark(true);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       await getCollectionByField("post", "documentId", `${params.name}`).then(
         (e) => {
-          getCollectionByField(
-            "User",
-            "username",
-            e.uid === "admin" ? "et2Z97MWgdbazZjNMZXgmVJiOFU2" : `${e.uid}`
-          ).then((doc) => {
-            setCurrentUserSnap(doc);
-          });
-          setReadOnly(true);
+          try {
+            console.log(e.uid);
+            getCollectionByField(
+              "User",
+              "uid",
+              e.uid === "admin" ? "et2Z97MWgdbazZjNMZXgmVJiOFU2" : `${e.uid}`
+            ).then((doc) => {
+              console.log(doc);
+              setCurrentUserSnap(doc);
+            });
+            setReadOnly(true);
+          } catch (error) {
+            console.log(error);
+          }
         }
       );
     }
@@ -114,6 +125,7 @@ export const Recipe = () => {
             : setValue(Math.floor(sum / e.rating.length) + 0.5);
         } catch (error) {
           console.log("not rated yet");
+          setReadOnly(false);
         }
 
         // const commentSnapshot = await getDocs(
@@ -145,7 +157,8 @@ export const Recipe = () => {
 
   useEffect(() => {
     fetchDetails();
-  }, [params.name, setSnap, setSlideImages, setCommentSnapshot, user]);
+    // }, [params.name, setSnap, setSlideImages, setCommentSnapshot, user]);
+  }, []);
 
   const onClickBookmark = (e) => {
     setBookmark(!bookmark);
@@ -181,78 +194,82 @@ export const Recipe = () => {
             >
               <div
                 style={{
-                  width: "600px",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "flex-start",
                   marginBottom: "2rem",
                 }}
               >
-                <h2>{snap.title}</h2>
+                <div>
+                  <h2>{snap.title}</h2>
+                </div>
+                <div>
+                  <Box
+                    sx={{
+                      width: 200,
+                      display: "flex",
+                      alignItems: "center",
+                      marginLeft: "60px",
+                    }}
+                  >
+                    <Rating
+                      size="large"
+                      name="hover-feedback"
+                      value={value}
+                      precision={0.5}
+                      readOnly={readOnly}
+                      getLabelText={getLabelText}
+                      onChange={(event, newValue) => {
+                        setReadOnly(true);
 
-                <Box
-                  sx={{
-                    width: 200,
-                    display: "flex",
-                    alignItems: "center",
-                    marginLeft: "60px",
-                  }}
-                >
-                  <Rating
-                    size="large"
-                    name="hover-feedback"
-                    value={value}
-                    precision={0.5}
-                    readOnly={readOnly}
-                    getLabelText={getLabelText}
-                    onChange={(event, newValue) => {
-                      setReadOnly(true);
+                        updateField("post", params.name, {
+                          rating: arrayUnion({
+                            ratedBy: user?.uid,
+                            number: newValue,
+                          }),
+                        }).then((e) => {
+                          getCollectionByField(
+                            "post",
+                            "documentId",
+                            `${params.name}`
+                          ).then(async (data) => {
+                            // setSnap(data);
 
-                      updateField("post", params.name, {
-                        rating: arrayUnion({
-                          ratedBy: user?.uid,
-                          number: newValue,
-                        }),
-                      }).then((e) => {
-                        getCollectionByField(
-                          "post",
-                          "documentId",
-                          `${params.name}`
-                        ).then(async (data) => {
-                          // setSnap(data);
+                            let sum = 0;
 
-                          let sum = 0;
-
-                          data.rating.forEach((value) => {
-                            sum += value.number;
+                            data.rating.forEach((value) => {
+                              sum += value.number;
+                            });
+                            if (Number.isInteger(sum / data.rating.length)) {
+                              setValue(sum / data.rating.length);
+                              setHover(sum / data.rating.length);
+                            } else {
+                              setValue(
+                                Math.floor(sum / data.rating.length) + 0.5
+                              );
+                              setHover(
+                                Math.floor(sum / data.rating.length) + 0.5
+                              );
+                            }
                           });
-                          if (Number.isInteger(sum / data.rating.length)) {
-                            setValue(sum / data.rating.length);
-                            setHover(sum / data.rating.length);
-                          } else {
-                            setValue(
-                              Math.floor(sum / data.rating.length) + 0.5
-                            );
-                            setHover(
-                              Math.floor(sum / data.rating.length) + 0.5
-                            );
-                          }
                         });
-                      });
-                    }}
-                    onChangeActive={(event, newHover) => {
-                      setHover(newHover);
-                    }}
-                    emptyIcon={
-                      <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-                    }
-                  />
-                  {value !== null && (
-                    <Box sx={{ ml: 2 }} fontSize="22px">
-                      {labels[hover !== -1 ? hover : value]}
-                    </Box>
-                  )}
-                </Box>
+                      }}
+                      onChangeActive={(event, newHover) => {
+                        setHover(newHover);
+                      }}
+                      emptyIcon={
+                        <StarIcon
+                          style={{ opacity: 0.55 }}
+                          fontSize="inherit"
+                        />
+                      }
+                    />
+                    {value !== null && (
+                      <Box sx={{ ml: 2 }} fontSize="22px">
+                        {labels[hover !== -1 ? hover : value]}
+                      </Box>
+                    )}
+                  </Box>
+                </div>
               </div>
               <Slide arrows={swipe} canSwipe={swipe} autoplay={swipe}>
                 {slideImages.map((slideImage, index) => (

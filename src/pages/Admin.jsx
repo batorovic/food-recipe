@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
+
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { BiHome, BiArchive, BiLogOut } from "react-icons/bi";
 import { TbLayoutDashboard } from "react-icons/tb";
@@ -99,7 +103,8 @@ export const Admin = () => {
   return (
     <>
       {loading ? (
-        <h3 style={{ textAlign: "center" }}>LOADING</h3>
+        // <h3 style={{ textAlign: "center" }}>LOADING</h3>
+        <LinearProgress color="success" />
       ) : !acces ? (
         <h3 style={{ textAlign: "center" }}>NO ACCES</h3>
       ) : (
