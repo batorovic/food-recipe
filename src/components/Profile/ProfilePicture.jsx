@@ -11,6 +11,7 @@ export const ProfilePicture = (props) => {
   return (
     <ProfilePictureWrapper>
       <img src={props.snap.photoUrl} alt="" />
+      {console.log(props.snap.photoUrl)}
       {props.snap.uid === user?.uid && (
         <>
           <div className="profilePicture">

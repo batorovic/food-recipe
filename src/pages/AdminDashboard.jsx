@@ -23,6 +23,7 @@ export const AdminDashboard = (props) => {
         <div className="text">Dashboard</div>
         <div className="content">
           <AdminCard userSnap={userSnap} postSnap={postSnap} />
+
           <AdminPosts />
         </div>
       </Wrapper>

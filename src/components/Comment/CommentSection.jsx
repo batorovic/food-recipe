@@ -40,7 +40,7 @@ export const CommentSection = (props) => {
 
   const getData = async () => {
     console.log("comment section use effect");
-
+    console.log(currentUserSnap);
     // if (user) {
     //   const snapshot = await getCollectionSnapshot("User", `${user?.uid}`);
     //   setCurrentUserSnap(snapshot);

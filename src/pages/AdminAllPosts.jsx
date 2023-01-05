@@ -32,6 +32,7 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
 import moment from "moment/moment";
+import { Autocomplete, TextField } from "@mui/material";
 
 function createData(docId, title, time, addedBy, category, comment) {
   return {
@@ -191,13 +192,21 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
+const removeSelections = async (
+  selectedItems,
+  rows,
+  setRows,
+  setSelected,
+  savedRows
+) => {
   let selectedIndexs = [];
+  console.log(selectedItems);
   for (const key in rows) {
     if (selectedItems.includes(rows[key].docId)) {
       selectedIndexs.push(rows[key].docId);
-      await deleteFromCollection("post", rows[key].docId);
-      await deletePostFromUser(rows[key].addedBy, rows[key].docId);
+      // await deleteFromCollection("post", rows[key].docId);
+      // await deletePostFromUser(rows[key].addedBy, rows[key].docId);
+
       // rows.splice(key, 1);
       // setRows(rows);
     }
@@ -205,12 +214,14 @@ const removeSelections = async (selectedItems, rows, setRows, setSelected) => {
 
   for (const index in selectedIndexs) {
     rows.splice(selectedIndexs[index], 1);
+    savedRows.splice(selectedIndexs[index], 1);
   }
   setSelected([]);
 };
 
 function EnhancedTableToolbar(props) {
-  const { numSelected, selections, rows, setRows, setSelected } = props;
+  const { numSelected, selections, rows, setRows, setSelected, savedRows } =
+    props;
 
   return (
     <Toolbar
@@ -250,7 +261,13 @@ function EnhancedTableToolbar(props) {
         <Tooltip title="Delete">
           <IconButton
             onClick={() =>
-              removeSelections(selections, rows, setRows, setSelected)
+              removeSelections(
+                selections,
+                rows,
+                setRows,
+                setSelected,
+                savedRows
+              )
             }
           >
             <DeleteIcon />
@@ -280,6 +297,10 @@ export default function EnhancedTable(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [user, loading, error] = useAuthState(auth);
   const [rows, setRows] = React.useState([]);
+  const [savedRows, setSaveRows] = React.useState([]);
+  const [selectedLabel, setSelectedLabel] = React.useState([
+    { title: "Document id", id: "docId" },
+  ]);
 
   const getAllPosts = async () => {
     postSnap.forEach((doc) => {
@@ -396,6 +417,26 @@ export default function EnhancedTable(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+  const inputOnChange = (e) => {
+    if (e === "") {
+      setRows(savedRows);
+
+      return;
+    }
+    let filteredRows;
+    selectedLabel.forEach((value) => {
+      filteredRows = rows.filter((row) => {
+        return row[value.id].toLowerCase().includes(e.toLowerCase());
+      });
+    });
+    setRows(filteredRows);
+  };
+  const tblHeaders = [
+    { title: "Document id", id: "docId" },
+    { title: "Title", id: "title" },
+    { title: "Added By", id: "addedBy" },
+    { title: "Category", id: "category" },
+  ];
   return (
     <motion.div
       animate={{ opacity: 1 }}
@@ -405,6 +446,51 @@ export default function EnhancedTable(props) {
     >
       <Box sx={{ width: "100%", padding: "25px 60px" }}>
         {/* {console.log(snap)} */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "1.2rem",
+            gap: "2rem",
+          }}
+        >
+          <TextField
+            style={{ width: "30%" }}
+            id="standard-basic"
+            label="Standard"
+            variant="standard"
+            onChange={(e) => {
+              if (savedRows.length === 0) {
+                setSaveRows(rows);
+              }
+              inputOnChange(e.target.value);
+            }}
+          />
+          <Autocomplete
+            style={{ width: "70%" }}
+            id="tags-standard"
+            options={tblHeaders}
+            getOptionLabel={(option) => option.title}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onChange={(event, value) =>
+              value
+                ? setSelectedLabel([value])
+                : setSelectedLabel([{ title: "Document id", id: "docId" }])
+            }
+            renderInput={(params) => (
+              <>
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label="Select values"
+                  placeholder="Filter"
+                />
+              </>
+            )}
+          />
+        </div>
+
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar
             numSelected={selected.length}
@@ -412,6 +498,7 @@ export default function EnhancedTable(props) {
             rows={rows}
             setRows={setRows}
             setSelected={setSelected}
+            savedRows={savedRows}
           />
           <TableContainer>
             <Table

@@ -17,9 +17,7 @@ export const AdminCard = (props) => {
   }, []);
 
   const getTotalPost = (userSnap) =>
-    userSnap.map((value) =>
-      setTotalPost((totalPost) => totalPost + value.post.length)
-    );
+    userSnap.map((value) => setTotalPost(value.post.length + totalPost));
 
   const getTotalComments = (postSnap) =>
     postSnap.map((value) =>
@@ -55,19 +53,21 @@ export const AdminCard = (props) => {
   ];
   return (
     <Wrapper>
-      <div className="cardWrapper">
-        {card.map((value) => {
-          return (
-            <div className="card" key={value.id}>
-              <div className="cardInfo">
-                <div className="cardIcon">{value.icon}</div>
-                <span className="header">{value.text}</span>
+      {totalPost > 0 ? (
+        <div className="cardWrapper">
+          {card.map((value) => {
+            return (
+              <div className="card" key={value.id}>
+                <div className="cardInfo">
+                  <div className="cardIcon">{value.icon}</div>
+                  <span className="header">{value.text}</span>
+                </div>
+                <span className="fb-val">{value.val}</span>
               </div>
-              <span className="fb-val">{value.val}</span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : null}
     </Wrapper>
   );
 };

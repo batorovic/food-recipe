@@ -41,6 +41,7 @@ export const Recipe = () => {
   const [user, loading, error] = useAuthState(auth);
   const [bookmark, setBookmark] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
+  const [postUser, setPostUser] = useState({});
   const labels = {
     0.5: "0.5",
     1: "1",
@@ -80,6 +81,7 @@ export const Recipe = () => {
         console.log(error);
       }
     } else {
+      //asagidaki elseden cikti ?
       await getCollectionByField("post", "documentId", `${params.name}`).then(
         (e) => {
           try {
@@ -89,16 +91,18 @@ export const Recipe = () => {
               "uid",
               e.uid === "admin" ? "et2Z97MWgdbazZjNMZXgmVJiOFU2" : `${e.uid}`
             ).then((doc) => {
-              console.log(doc);
+              // console.log(doc);
               setCurrentUserSnap(doc);
             });
-            setReadOnly(true);
+            // setReadOnly(true);
           } catch (error) {
             console.log(error);
           }
         }
       );
+      setReadOnly(true);
     }
+
     //apiden cekmek
     // const data = await fetch(
     //   `https://api.spoonacular.com/recipes/${params.name}/information?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}`
@@ -107,6 +111,14 @@ export const Recipe = () => {
     // setDetails(detailData);
     await getCollectionByField("post", "documentId", `${params.name}`).then(
       async (e) => {
+        getCollectionByField(
+          "User",
+          "uid",
+          e.uid === "admin" ? "et2Z97MWgdbazZjNMZXgmVJiOFU2" : `${e.uid}`
+        ).then((doc) => {
+          // console.log(doc);
+          setPostUser(doc);
+        });
         let sum = 0;
         setSnap(e);
 
@@ -125,7 +137,7 @@ export const Recipe = () => {
             : setValue(Math.floor(sum / e.rating.length) + 0.5);
         } catch (error) {
           console.log("not rated yet");
-          setReadOnly(false);
+          // setReadOnly(false);
         }
 
         // const commentSnapshot = await getDocs(
@@ -318,9 +330,11 @@ export const Recipe = () => {
                   >
                     <div className="recipe-owner">
                       <span style={{ fontSize: "22px" }}>
-                        {currentUserSnap.name}
+                        {/* {currentUserSnap.name} */}
+                        {postUser.name}
                       </span>
-                      <span>{currentUserSnap.about}</span>
+                      {/* <span>{currentUserSnap.about}</span> */}
+                      <span>{postUser.about}</span>
                     </div>
                     <div className="avatar">
                       <img src={snap.userPhoto} alt="avatar" />
