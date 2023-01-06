@@ -204,8 +204,8 @@ const removeSelections = async (
   for (const key in rows) {
     if (selectedItems.includes(rows[key].docId)) {
       selectedIndexs.push(rows[key].docId);
-      // await deleteFromCollection("post", rows[key].docId);
-      // await deletePostFromUser(rows[key].addedBy, rows[key].docId);
+      await deleteFromCollection("post", rows[key].docId);
+      await deletePostFromUser(rows[key].addedBy, rows[key].docId);
 
       // rows.splice(key, 1);
       // setRows(rows);
@@ -457,6 +457,7 @@ export default function EnhancedTable(props) {
         >
           <TextField
             style={{ width: "30%" }}
+            color="secondary"
             id="standard-basic"
             label="Standard"
             variant="standard"
@@ -481,6 +482,7 @@ export default function EnhancedTable(props) {
             renderInput={(params) => (
               <>
                 <TextField
+                  color="secondary"
                   {...params}
                   variant="standard"
                   label="Select values"

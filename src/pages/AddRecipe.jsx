@@ -21,7 +21,7 @@ import { CgProfile } from "react-icons/cg";
 import { FiSettings } from "react-icons/fi";
 import { MdExitToApp } from "react-icons/md";
 import { signOut } from "firebase/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GiKnifeFork } from "react-icons/gi";
 import { motion } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
@@ -41,6 +41,7 @@ import { Alert, Button, Collapse, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 
 export const AddRecipe = (props) => {
+  const location = useLocation();
   const [alert, setAlert] = useState(false);
   const navigate = useNavigate();
   const [user, loading, error] = useAuthState(auth);
@@ -151,11 +152,11 @@ export const AddRecipe = (props) => {
       instruction: textAreaValue.instructions.split("\n"),
       requierements: reqValues,
       title: textAreaValue.title,
-      uid: user?.uid,
+      uid: location.state.name ? "admin" :user?.uid,
       coverImagePath: "",
       filePaths: [],
       documentId: "",
-      addedBy: snapshot.username,
+      addedBy: location.state.name ? "admin" : snapshot.username,
       timestamp: serverTimestamp(),
       userPhoto: snapshot.photoUrl,
     });

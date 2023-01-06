@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
-
+import { IoMdAddCircleOutline } from "react-icons/io";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { BiHome, BiArchive, BiLogOut } from "react-icons/bi";
 import { TbLayoutDashboard } from "react-icons/tb";
@@ -80,7 +80,7 @@ export const Admin = () => {
       id: 0,
       icon: <TbLayoutDashboard />,
       text: "Dashboard",
-      path: "/admin",
+      // path: "/admin",
       bgColor: {
         backgroundColor: "#695cfe",
         borderRadius: "6px",
@@ -91,7 +91,18 @@ export const Admin = () => {
       id: 1,
       icon: <BiArchive />,
       text: "Posts",
-      path: "/admin/posts",
+      // path: "/admin/posts",
+      bgColor: {
+        backgroundColor: "#695cfe",
+        borderRadius: "6px",
+      },
+      color: { color: "#fff" },
+    },
+    {
+      id: 2,
+      icon: <IoMdAddCircleOutline />,
+      text: "Add Post",
+      linkProps: { to: "/addrecipe", state: { name: "admin" } },
       bgColor: {
         backgroundColor: "#695cfe",
         borderRadius: "6px",
@@ -136,7 +147,7 @@ export const Admin = () => {
                         style={selectedId === value.id ? value.bgColor : null}
                       >
                         <Link
-                          // to={value.path}
+                          {...value.linkProps}
                           onClick={() => {
                             setSelected(value.text);
                             setSelectedId(value.id);
