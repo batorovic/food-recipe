@@ -72,16 +72,19 @@ export const AdminCard = (props) => {
   );
 };
 const Wrapper = styled.div`
-  padding: 12px 60px;
-  /* display: flex; */
+  padding: 12px 40px;
+
   .cardWrapper {
     /* margin-left: 40px; */
     /* background-color: #efd4ba; */
     border-radius: 6px;
     padding: 25px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+
+    display: grid;
+    grid-template-columns: 290px 290px;
+    grid-row: auto auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 50px;
   }
 
   .card {

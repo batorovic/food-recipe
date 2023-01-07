@@ -6,6 +6,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { BiHome, BiArchive, BiLogOut } from "react-icons/bi";
+import { CgComment } from "react-icons/cg";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../styles/admin.css";
@@ -17,6 +18,7 @@ import { auth, db, getAllDocsFromCollection } from "../utils/firebase";
 import { collection, doc, getDoc, getDocs, query } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
+import EnhancedTableComment from "./AdminComments";
 
 export const Admin = () => {
   const [toggle, setToggle] = useState(true);
@@ -63,6 +65,7 @@ export const Admin = () => {
         console.log("error");
       });
   };
+
   useEffect(() => {
     console.log("admin page use effect");
     document.title = "Admin Page";
@@ -103,6 +106,17 @@ export const Admin = () => {
       icon: <IoMdAddCircleOutline />,
       text: "Add Post",
       linkProps: { to: "/addrecipe", state: { name: "admin" } },
+      bgColor: {
+        backgroundColor: "#695cfe",
+        borderRadius: "6px",
+      },
+      color: { color: "#fff" },
+    },
+    {
+      id: 3,
+      icon: <CgComment />,
+      text: "Comments",
+      // path: "/admin/posts",
       bgColor: {
         backgroundColor: "#695cfe",
         borderRadius: "6px",
@@ -193,6 +207,8 @@ export const Admin = () => {
               ) : selected === "Posts" ? (
                 // <AdminPosts li="yes" />
                 <EnhancedTable postSnap={post} />
+              ) : selected === "Comments" ? (
+                <EnhancedTableComment postSnap={post} />
               ) : null}
             </section>
           ) : null}
