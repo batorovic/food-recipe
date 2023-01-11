@@ -198,12 +198,11 @@ const removeSelections = async (
   for (const key in rows) {
     if (selectedItems.includes(rows[key].commentId)) {
       selectedIndexs.push(rows[key].commentId);
-      await deleteFromCollection(
-        `post/${rows[key].docId}/comment`,
-        rows[key].commentId
-      );
-      // await deleteFromCollection("post", rows[key].docId);
-
+      console.log(rows[key].docId, rows[key].commentId);
+      // await deleteFromCollection(
+      //   `post/${rows[key].docId}/comment`,
+      //   rows[key].commentId
+      // );
       // await deletePostFromUser(rows[key].addedBy, rows[key].docId);
 
       // rows.splice(key, 1);
@@ -308,6 +307,7 @@ export default function EnhancedTableComment(props) {
       commentSnapshot.forEach((commentDoc) => {
         // console.log(commentDoc.data());
         let strDate;
+
         let timeDate;
         timeDate =
           commentDoc.data().time.toDate().toDateString() +
