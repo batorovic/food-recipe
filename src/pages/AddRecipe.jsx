@@ -62,6 +62,7 @@ export const AddRecipe = (props) => {
   const [snapshot, setSnapshot] = useState({});
 
   useEffect(() => {
+    console.log(location);
     function getSnapshot() {
       console.log("add recipe use effect");
       getCollectionSnapshot("User", user?.uid).then((result) => {
@@ -146,17 +147,18 @@ export const AddRecipe = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     //sets collection and returns the added collection id
+
     const documentId = await setCollection("post", {
       brief: textAreaValue.brief.split("\n"),
       ingredient: textAreaValue.ingredients.split("\n"),
       instruction: textAreaValue.instructions.split("\n"),
       requierements: reqValues,
       title: textAreaValue.title,
-      uid: location.state.name ? "admin" :user?.uid,
+      uid: location.state ? "admin" : user?.uid,
       coverImagePath: "",
       filePaths: [],
       documentId: "",
-      addedBy: location.state.name ? "admin" : snapshot.username,
+      addedBy: location.state ? "admin" : snapshot.username,
       timestamp: serverTimestamp(),
       userPhoto: snapshot.photoUrl,
     });
@@ -171,7 +173,7 @@ export const AddRecipe = (props) => {
     ).then(() => {
       updateField("post", documentId, { documentId: documentId });
       updateField("User", user?.uid, {
-        numberOfPosts: increment(1),
+        numberOfPosts: location.state ? increment(0) : increment(1),
         post: arrayUnion(documentId),
       });
       //show alert and disapper after 3sec.

@@ -22,17 +22,27 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  getDocs,
+  increment,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import {
   auth,
   db,
   deleteFromCollection,
   deletePostFromUser,
+  updateField,
 } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { motion } from "framer-motion";
 import moment from "moment/moment";
 import { Autocomplete, TextField } from "@mui/material";
+import { TbDropCircle } from "react-icons/tb";
 
 function createData(docId, title, time, addedBy, category, comment) {
   return {
@@ -206,6 +216,11 @@ const removeSelections = async (
       selectedIndexs.push(rows[key].docId);
       await deleteFromCollection("post", rows[key].docId);
       await deletePostFromUser(rows[key].addedBy, rows[key].docId);
+      updateField("User", rows[key].uid, {
+        numberOfPosts:
+          rows[key].addedBy !== "admin" ? increment(-1) : increment(0),
+        post: arrayRemove(rows[key].docId),
+      });
 
       // rows.splice(key, 1);
       // setRows(rows);
@@ -315,6 +330,7 @@ export default function EnhancedTable(props) {
         setRows((rows) => [
           ...rows,
           {
+            uid: doc.uid,
             docId: doc.documentId,
             title: doc.title,
             time: strDate,

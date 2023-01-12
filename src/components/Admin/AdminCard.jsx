@@ -16,8 +16,12 @@ export const AdminCard = (props) => {
     getTotalComments(postSnap);
   }, []);
 
-  const getTotalPost = (userSnap) =>
-    userSnap.map((value) => setTotalPost(value.post.length + totalPost));
+  const getTotalPost = (userSnap) => {
+    console.log(userSnap);
+    userSnap.map((value) =>
+      setTotalPost((totalPost) => value.numberOfPosts + totalPost)
+    );
+  };
 
   const getTotalComments = (postSnap) =>
     postSnap.map((value) =>
@@ -30,13 +34,13 @@ export const AdminCard = (props) => {
       id: 1,
       icon: <GiKnifeFork className="icon" />,
       text: "Total Recipes",
-      val: postSnap.length,
+      val: postSnap.length - 1,
     },
     {
       id: 2,
       icon: <BiCommentDetail className="icon" />,
       text: "Total Comments",
-      val: totalComments,
+      val: totalComments - 1,
     },
     {
       id: 3,

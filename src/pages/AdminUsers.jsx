@@ -96,13 +96,7 @@ const headCells = [
     id: "docId",
     numeric: false,
     disablePadding: true,
-    label: "Post Document Id",
-  },
-  {
-    id: "commentId",
-    numeric: false,
-    disablePadding: true,
-    label: "Comment Id",
+    label: "Document Id",
   },
   {
     id: "username",
@@ -110,17 +104,17 @@ const headCells = [
     disablePadding: false,
     label: "Username",
   },
+  // {
+  //   id: "time",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "Date",
+  // },
   {
-    id: "time",
+    id: "numberOfPosts",
     numeric: true,
     disablePadding: false,
-    label: "Date",
-  },
-  {
-    id: "comment",
-    numeric: false,
-    disablePadding: false,
-    label: "Comment",
+    label: "Number Of Posts",
   },
 ];
 
@@ -196,13 +190,11 @@ const removeSelections = async (
   let selectedIndexs = [];
   console.log(selectedItems);
   for (const key in rows) {
-    if (selectedItems.includes(rows[key].commentId)) {
-      selectedIndexs.push(rows[key].commentId);
-      console.log(rows[key].docId, rows[key].commentId);
-      // await deleteFromCollection(
-      //   `post/${rows[key].docId}/comment`,
-      //   rows[key].commentId
-      // );
+    if (selectedItems.includes(rows[key].docId)) {
+      selectedIndexs.push(rows[key].docId);
+      console.log(rows[key].docId, rows[key].docId);
+      // await deleteFromCollection("User", rows[key].docId);
+
       // await deletePostFromUser(rows[key].addedBy, rows[key].docId);
 
       // rows.splice(key, 1);
@@ -285,8 +277,8 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTableComment(props) {
-  const { postSnap } = props;
+export default function EnhancedTableUsers(props) {
+  const { userSnap } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("docId");
   const [selected, setSelected] = React.useState([]);
@@ -301,34 +293,25 @@ export default function EnhancedTableComment(props) {
   ]);
 
   const getAllPosts = async () => {
-    postSnap.forEach(async (doc) => {
-      const docRef = collection(db, `post/${doc.documentId}/comment`);
-      const commentSnapshot = await getDocs(query(docRef));
-      commentSnapshot.forEach((commentDoc) => {
-        // console.log(commentDoc.data());
-        let strDate;
-
-        let timeDate;
-        timeDate =
-          commentDoc.data().time.toDate().toDateString() +
-          " " +
-          commentDoc.data().time.toDate().toLocaleTimeString("tr-TR");
-        strDate = commentDoc.data().time.toString();
-
-        // doc.data() is never undefined for query doc snapshots
+    userSnap.forEach((doc) => {
+      let strDate;
+      let timeDate;
+      try {
         setRows((rows) => [
           ...rows,
           {
-            docId: doc.documentId,
-            commentId: commentDoc.id,
-            username: commentDoc.data().username,
-            time: strDate,
-            timeDate: timeDate,
+            docId: doc.uid,
+            username: doc.username,
+            // time: doc.joinDate,
+            // timeDate: doc.joinDate,
+            numberOfPosts: doc.numberOfPosts,
             // time: moment(doc.timestamp, "YYYY-MM-DD").toDate().getTime(),
-            comment: commentDoc.data().comment,
           },
         ]);
-      });
+      } catch (error) {
+        console.log(doc, error);
+        //empty data
+      }
     });
     // const q = query(collection(db, "post"));
     // await getDocs(q).then((e) =>
@@ -371,7 +354,7 @@ export default function EnhancedTableComment(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.commentId);
+      const newSelected = rows.map((n) => n.docId);
       setSelected(newSelected);
       return;
     }
@@ -432,10 +415,10 @@ export default function EnhancedTableComment(props) {
     setRows(filteredRows);
   };
   const tblHeaders = [
-    { title: "Post Document Id", id: "docId" },
-    { title: "Comment Id", id: "commentId" },
+    { title: "Document Id", id: "docId" },
     { title: "Username", id: "username" },
-    { title: "Comment", id: "comment" },
+    // { title: "Join Date", id: "time" },
+    { title: "Number Of Posts", id: "numberOfPosts" },
   ];
   return (
     <motion.div
@@ -524,13 +507,13 @@ export default function EnhancedTableComment(props) {
                   .sort(getComparator(order, orderBy, setRows))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.commentId);
+                    const isItemSelected = isSelected(row.docId);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.commentId)}
+                        onClick={(event) => handleClick(event, row.docId)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -555,10 +538,9 @@ export default function EnhancedTableComment(props) {
                         >
                           {row.docId}
                         </TableCell>
-                        <TableCell align="right">{row.commentId}</TableCell>
                         <TableCell align="right">{row.username}</TableCell>
-                        <TableCell align="right">{row.timeDate}</TableCell>
-                        <TableCell align="right">{row.comment}</TableCell>
+                        {/* <TableCell align="right">{row.timeDate}</TableCell> */}
+                        <TableCell align="right">{row.numberOfPosts}</TableCell>
                       </TableRow>
                     );
                   })}
