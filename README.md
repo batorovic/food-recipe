@@ -8,7 +8,6 @@ This repository contains a collection of delicious food recipes.
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
@@ -57,10 +56,6 @@ To use the Food Recipe project locally, follow these steps:
 5. Signup or signin to access additional features.
 6. Follow other users to see their recipes in your feed.
 7. Explore recipes from users you are following in the "Following" section.
-
-## Contributing
-
-Contributions to the Food Recipe project are welcome! If you have a new recipe to add or want to enhance the existing ones, please follow the guidelines outlined in the CONTRIBUTING.md file.
 
 ## License
 
