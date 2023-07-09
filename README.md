@@ -57,6 +57,17 @@ To use the Food Recipe project locally, follow these steps:
 6. Follow other users to see their recipes in your feed.
 7. Explore recipes from users you are following in the "Following" section.
 
+## Example Images
+
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/de0a0f2b-b9a7-4c26-8cd5-61656d695578" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/7f9a835e-658c-45b6-999a-21aa97b7c0a3" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/425588c4-885d-46fa-80c5-23373587aaab" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/62cc72bd-42a4-4826-8f2a-f6511aaa1f6d" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/9b9dba7e-e1da-4754-8d2d-ec72833d75f6" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/6f75de56-3024-40ce-b9aa-53826135d16b" width="800" height="470">
+<img src="https://github.com/batorovic/food-recipe/assets/33568252/685db680-444f-4ab9-b9b2-06d483af561b" width="800" height="470">
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
